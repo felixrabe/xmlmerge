@@ -295,16 +295,20 @@ class XMLCommands(object):
         input_dirpath = p.dirname(self.options.input)
         file_ = p.normpath(p.join(input_dirpath, e.attrib["file"]))
         rel_path = pp.relpath(file_, input_dirpath)
-        if self.options.trace_includes:
-            e.addnext(ET.Element("{%s}Start" % xmns["xmt"], nsmap=xmns))
         select = e.attrib["select"]
         objectIndexBase = e.attrib.get("objectIndexBase")
         elements = ET.parse(file_).xpath(select)
+        
+        if self.options.trace_includes:
+            e_start = ET.Element("{%s}Start" % xmns["xmt"], nsmap=xmns)
+            e.addnext(e_start)
+            e = e_start
         for e_inc in elements:
             e.addnext(e_inc)
             e = e_inc
         if self.options.trace_includes:
             e.addnext(ET.Element("{%s}End" % xmns["xmt"], nsmap=xmns))
+        
         if objectIndexBase is not None:
             objectIndexBase = eval(objectIndexBase)
             for e_inc in elements:
