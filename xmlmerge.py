@@ -20,6 +20,8 @@
 # along with XML Merge.  If not, see <http://www.gnu.org/licenses/>.
 
 
+# Developed (i.e. tested) using Python 2.6.3 and lxml 2.2.2
+
 import copy
 import optparse
 import os
