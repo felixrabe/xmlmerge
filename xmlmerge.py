@@ -227,7 +227,7 @@ class XMLCommands(object):
             new_root.text = root.text
             new_root.tail = root.tail
             for x in root: new_root.append(copy.copy(x))
-            xml_tree._setroot(root)
+            xml_tree._setroot(new_root)
 
         for e in xml_tree.xpath("//xm:Include", namespaces=xmns):
             self.Include(e)
