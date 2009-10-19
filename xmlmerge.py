@@ -23,6 +23,7 @@
 import copy
 import optparse
 import os
+import posixpath
 import re
 import sys
 import traceback
@@ -30,7 +31,8 @@ import traceback
 import lxml.etree as ET
 
 
-xmns = {"xm": "urn:felixrabe:xmlns:xmlmerge:preprocess"}
+xmns = {"xm":   "urn:felixrabe:xmlns:xmlmerge:preprocess",
+        "xmt":  "urn:felixrabe:xmlns:xmlmerge:inctrace"}
 
 
 class OptionParser(optparse.OptionParser):
@@ -43,6 +45,10 @@ class OptionParser(optparse.OptionParser):
                         help="(REQUIRED) input XML file")
         self.add_option("-o", "--output",
                         help="output XML file")
+        self.add_option("-t", "--trace-includes", action="store_true",
+                        help=("Add xmt: namespace tags to output to " +
+                              "trace origins of elements to included " +
+                              "files"))
         self.add_option("-D", "--no-diff", action="store_true",
                         help=("if output differs from reference, do " +
                               "not produce a difference HTML file"))
@@ -215,6 +221,14 @@ class XMLCommands(object):
             loop.getparent().remove(loop)
         xml_tree._setroot(root)
 
+        if self.options.trace_includes:
+            root = xml_tree.getroot()
+            new_root = ET.Element(root.tag, attrib=root.attrib, nsmap=xmns)
+            new_root.text = root.text
+            new_root.tail = root.tail
+            for x in root: new_root.append(copy.copy(x))
+            xml_tree._setroot(root)
+
         for e in xml_tree.xpath("//xm:Include", namespaces=xmns):
             self.Include(e)
             e.getparent().remove(e)
@@ -277,14 +291,20 @@ class XMLCommands(object):
         remove the Object/@offset attributes.
         """
         p = os.path
-        file_ = p.normpath(p.join(p.dirname(self.options.input),
-                                  e.attrib["file"]))
+        pp = posixpath
+        input_dirpath = p.dirname(self.options.input)
+        file_ = p.normpath(p.join(input_dirpath, e.attrib["file"]))
+        rel_path = pp.relpath(file_, input_dirpath)
+        if self.options.trace_includes:
+            e.addnext(ET.Element("{%s}Start" % xmns["xmt"], nsmap=xmns))
         select = e.attrib["select"]
         objectIndexBase = e.attrib.get("objectIndexBase")
         elements = ET.parse(file_).xpath(select)
         for e_inc in elements:
             e.addnext(e_inc)
             e = e_inc
+        if self.options.trace_includes:
+            e.addnext(ET.Element("{%s}End" % xmns["xmt"], nsmap=xmns))
         if objectIndexBase is not None:
             objectIndexBase = eval(objectIndexBase)
             for e_inc in elements:
