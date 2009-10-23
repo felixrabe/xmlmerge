@@ -183,15 +183,16 @@ def read_xml_schema_file(xml_schema_filename):
     xml_schema = ET.XMLSchema(xml_schema_xmltree)
     return xml_schema
 
-def match_against_schema(output_xml, xml_schema):
+def match_against_schema(options, output_xml, xml_schema):
     """
     Validate output against XML Schema.
     """
     is_valid = xml_schema.validate(output_xml.getroottree())
-    if is_valid:
-        print "Output matches XML Schema."
-    else:
-        print "Output invalid according to XML Schema."
+    if options.verbose >= 2:
+        if is_valid:
+            print "Output matches XML Schema."
+        else:
+            print "Output invalid according to XML Schema."
     return is_valid
 
 def read_reference_file(reference_filename):
@@ -203,21 +204,26 @@ def read_reference_file(reference_filename):
     reference_str = file(reference_filename, "rb").read()
     return reference_str
 
-def match_against_reference(output_filename, reference_str, do_html_diff):
+def match_against_reference(options, reference_str):
     """
     Compare output to reference.
     """
+    output_filename = options.output
+    do_html_diff = options.html_diff
+    
     ref = reference_str
     out = file(output_filename, "rb").read()
     is_valid = (ref == out)
-    if is_valid:
-        print "Output matches reference."
-    elif not do_html_diff:
-        print "Output and reference differ."
+    if options.verbose >= 2:
+        if is_valid:
+            print "Output matches reference."
+        elif not do_html_diff:
+            print "Output and reference differ."
     else:
         html_filename = "%s.diff.html" % output_filename
-        print ("Output and reference differ - " +
-               "generating '%s'..." % html_filename)
+        if options.verbose >= 2:
+            print ("Output and reference differ - " +
+                   "generating '%s'..." % html_filename)
         import difflib
         html_diff = difflib.HtmlDiff(wrapcolumn=75)
         ref = ref.split("\n")
@@ -262,15 +268,14 @@ def main(argv):
     matches_schema = True  # False means: match requested and negative
     if options.xml_schema is not None:
         xml_schema = read_xml_schema_file(options.xml_schema)
-        matches_schema = match_against_schema(output_xml, xml_schema)
+        matches_schema = match_against_schema(options, output_xml,
+                                              xml_schema)
     
     # If -r: Compare output to reference:
     matches_reference = True  # False means: match requested and negative
     if options.reference is not None:
         reference_str = read_reference_file(options.reference)
-        matches_reference = match_against_reference(options.output,
-                                                    reference_str,
-                                                    options.html_diff)
+        matches_reference = match_against_reference(options, reference_str)
 
     # Calculate and return the mismatch bitmap:
     mismatch_bitmap = 0
