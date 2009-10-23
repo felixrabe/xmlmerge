@@ -219,7 +219,7 @@ def match_against_reference(options, reference_str):
             print "Output matches reference."
         elif not do_html_diff:
             print "Output and reference differ."
-    else:
+    if do_html_diff and not is_valid:
         html_filename = "%s.diff.html" % output_filename
         if options.verbose >= 2:
             print ("Output and reference differ - " +
