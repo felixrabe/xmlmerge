@@ -139,25 +139,6 @@ def parse_command_line(argv):
 
 ## XML PROCESSING AND COMPARISON:
 
-def read_xml_schema_file(xml_schema_filename):
-    """
-    read_xml_schema_file(xml_schema_filename) -> xml_schema
-
-    Read the XML Schema file, and return an XML Schema object.
-    """
-    xml_schema_xmltree = ET.parse(xml_schema_filename)
-    xml_schema = ET.XMLSchema(xml_schema_xmltree)
-    return xml_schema
-
-def read_reference_file(reference_filename):
-    """
-    read_reference_file(reference_filename) -> reference_str
-
-    Read the reference file, and return it as a string.
-    """
-    reference_str = file(reference_filename, "rb").read()
-    return reference_str
-
 def read_input_file(input_filename):
     """
     read_input_file(input_filename) -> input_xml
@@ -192,6 +173,16 @@ def write_output_file(output_xml, output_filename):
     output_xml_tree.write(output_filename, pretty_print=True,
                           xml_declaration=True, encoding="utf-8")
 
+def read_xml_schema_file(xml_schema_filename):
+    """
+    read_xml_schema_file(xml_schema_filename) -> xml_schema
+
+    Read the XML Schema file, and return an XML Schema object.
+    """
+    xml_schema_xmltree = ET.parse(xml_schema_filename)
+    xml_schema = ET.XMLSchema(xml_schema_xmltree)
+    return xml_schema
+
 def match_against_schema(output_xml, xml_schema):
     """
     Validate output against XML Schema.
@@ -202,6 +193,15 @@ def match_against_schema(output_xml, xml_schema):
     else:
         print "Output invalid according to XML Schema."
     return is_valid
+
+def read_reference_file(reference_filename):
+    """
+    read_reference_file(reference_filename) -> reference_str
+
+    Read the reference file, and return it as a string.
+    """
+    reference_str = file(reference_filename, "rb").read()
+    return reference_str
 
 def match_against_reference(output_filename, reference_str, do_html_diff):
     """
@@ -238,14 +238,6 @@ def main(argv):
     # Parse command line to get options:
     options = parse_command_line(argv)
 
-    # If -s: Read XML Schema file:
-    if options.xml_schema is not None:
-        xml_schema = read_xml_schema_file(options.xml_schema)
-
-    # If -r: Read reference file:
-    if options.reference is not None:
-        reference_str = read_reference_file(options.reference)
-
     # Input file => preprocessing => output file:
     input_xml = read_input_file(options.input)
     output_xml = preprocess_xml(input_xml)
@@ -253,10 +245,12 @@ def main(argv):
 
     # If -s: Compare output to XML Schema file:
     if options.xml_schema is not None:
+        xml_schema = read_xml_schema_file(options.xml_schema)
         match_against_schema(output_xml, xml_schema)
     
     # If -r: Compare output to reference:
     if options.reference is not None:
+        reference_str = read_reference_file(options.reference)
         match_against_reference(options.output, reference_str,
                                 options.html_diff)
 
