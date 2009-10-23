@@ -85,7 +85,9 @@ class OptionParser(optparse.OptionParser):
 
 def parse_command_line(argv):
     """
-    Parse argv and return an optparse.Values object.
+    parse_command_line(argv) -> optparse.Values
+    
+    Parse argv and return an optparse.Values object containing the options.
 
     This function performs all the necessary checks and conversions to make
     sure all necessary options are given, and that all options are
@@ -141,17 +143,17 @@ def parse_command_line(argv):
 
 def read_input_file(input_filename):
     """
-    read_input_file(input_filename) -> input_xml
+    read_input_file(input_filename) -> ET._Element
     
-    Read the input file, and return an XML Element object of the root
-    element tree.
+    Read the input file, and return the corresponding XML Element object,
+    the element tree root.
     """
     input_xml = ET.parse(input_filename).getroot()
     return input_xml
 
 def preprocess_xml(input_xml):
     """
-    preprocess_xml(input_xml) -> output_xml
+    preprocess_xml(input_xml) -> ET._Element
     
     Preprocess the input XML Element to produce an output XML Element. The
     input XML element tree may be changed by the call to this function. Do
@@ -169,15 +171,16 @@ def write_output_file(output_xml, output_filename):
     """
     Write the output XML Element to the specified output filename.
     """
-    output_xml_tree = output_xml.getroottree()
-    output_xml_tree.write(output_filename, pretty_print=True,
-                          xml_declaration=True, encoding="utf-8")
+    output_xmltree = output_xml.getroottree()
+    output_xmltree.write(output_filename, pretty_print=True,
+                         xml_declaration=True, encoding="utf-8")
 
 def read_xml_schema_file(xml_schema_filename):
     """
-    read_xml_schema_file(xml_schema_filename) -> xml_schema
+    read_xml_schema_file(xml_schema_filename) -> ET.XMLSchema
 
-    Read the XML Schema file, and return an XML Schema object.
+    Read the XML Schema file, and return the corresponding XML Schema
+    object.
     """
     xml_schema_xmltree = ET.parse(xml_schema_filename)
     xml_schema = ET.XMLSchema(xml_schema_xmltree)
@@ -185,7 +188,12 @@ def read_xml_schema_file(xml_schema_filename):
 
 def match_against_schema(options, output_xml, xml_schema):
     """
+    match_against_schema(options, output_xml, xml_schema) -> bool
+    
     Validate output against XML Schema.
+
+    The result is True if the output XML Element (tree) matches the XML
+    Schema, otherwise the result is False.
     """
     is_valid = xml_schema.validate(output_xml.getroottree())
     if options.verbose >= 2:
@@ -198,7 +206,7 @@ def match_against_schema(options, output_xml, xml_schema):
 
 def read_reference_file(reference_filename):
     """
-    read_reference_file(reference_filename) -> reference_str
+    read_reference_file(reference_filename) -> string
 
     Read the reference file, and return it as a string.
     """
@@ -207,7 +215,14 @@ def read_reference_file(reference_filename):
 
 def match_against_reference(options, reference_str):
     """
-    Compare output to reference.
+    match_against_reference(options, reference_str) -> bool
+    
+    Compare the output string (read from file options.output) to the
+    reference string. If they are not the same (bytewise), and if
+    options.html_diff is True, create an HTML file showing the differences.
+
+    The result is True if output and reference are the same (bytewise),
+    otherwise the result is False.
     """
     output_filename = options.output
     do_html_diff = options.html_diff
@@ -230,6 +245,8 @@ def match_against_reference(options, reference_str):
 
 def create_reference_diff_html(html_filename, reference_str, output_str):
     """
+    Create an HTML file (created at html_filename) showing the differrences
+    between the reference string and the output string side-by-side.
     """
     reference_str = reference_str.split("\n")
     output_str    = output_str   .split("\n")
@@ -245,6 +262,8 @@ def create_reference_diff_html(html_filename, reference_str, output_str):
 
 def main(argv):
     """
+    main(argv) -> int
+    
     Process input to produce output according to the command line options.
 
     After the XML Merge Manual, this is the first piece of the code a new
@@ -259,10 +278,10 @@ def main(argv):
             return 1
         - On mismatch (either XML Schema (-s) or reference (-r)):
             return mismatch_bitmap  # see end of main()
-
-    If N matching functions are provided, and all are requested and all
-    fail to match the output file, then:
-        return (2 ** N - 1) * 2  # mismatch_bitmap
+        - To aid understanding the bitmap: If N matching functions are
+          provided, and all are requested and all fail to match the output
+          file:
+            return (2 ** N - 1) * 2  # mismatch_bitmap
     """
     # Parse command line to get options:
     options = parse_command_line(argv)
