@@ -56,6 +56,9 @@ class OptionParser(optparse.OptionParser):
                         help=("(REQUIRED) input XML file"))
         self.add_option("-o", "--output",
                         help=("output XML file (.out.xml if not given)"))
+        self.add_option("-s", "--xml-schema",
+                        help=("XML Schema (.xsd) to validate output " +
+                              "against"))
         self.add_option("-r", "--reference",
                         help=("compare output to a reference XML file"))
         self.add_option("-d", "--html-diff", action="store_true",
@@ -135,6 +138,16 @@ def parse_command_line(argv):
 
 ## XML PROCESSING AND COMPARISON:
 
+def read_xml_schema_file(xml_schema_filename):
+    """
+    read_xml_schema_file(xml_schema_filename) -> xml_schema
+
+    Read the XML Schema file, and return an XML Schema object.
+    """
+    xml_schema_xmltree = ET.parse(xml_schema_filename)
+    xml_schema = ET.XMLSchema(xml_schema_xmltree)
+    return xml_schema
+
 def read_reference_file(reference_filename):
     """
     read_reference_file(reference_filename) -> reference_str
@@ -178,8 +191,18 @@ def write_output_file(output_xml, output_filename):
     output_xml_tree.write(output_filename, pretty_print=True,
                           xml_declaration=True, encoding="utf-8")
 
-def validate_against_reference(output_filename, reference_str,
-                               do_html_diff):
+def match_against_schema(output_xml, xml_schema):
+    """
+    Validate output against XML Schema.
+    """
+    is_valid = xml_schema.validate(output_xml.getroottree())
+    if is_valid:
+        print "Output matches XML Schema."
+    else:
+        print "Output invalid according to XML Schema."
+    return is_valid
+
+def match_against_reference(output_filename, reference_str, do_html_diff):
     """
     Compare output to reference.
     """
@@ -214,6 +237,10 @@ def main(argv):
     # Parse command line to get options:
     options = parse_command_line(argv)
 
+    # If -s: Read XML Schema file:
+    if options.xml_schema is not None:
+        xml_schema = read_xml_schema_file(options.xml_schema)
+
     # If -r: Read reference file:
     if options.reference is not None:
         reference_str = read_reference_file(options.reference)
@@ -222,11 +249,15 @@ def main(argv):
     input_xml = read_input_file(options.input)
     output_xml = preprocess_xml(input_xml)
     write_output_file(output_xml, options.output)
+
+    # If -s: Compare output to XML Schema file:
+    if options.xml_schema is not None:
+        match_against_schema(output_xml, xml_schema)
     
     # If -r: Compare output to reference:
     if options.reference is not None:
-        validate_against_reference(options.output, reference_str,
-                                   options.html_diff)
+        match_against_reference(options.output, reference_str,
+                                options.html_diff)
 
 
 if __name__ == "__main__":
