@@ -209,7 +209,8 @@ def match_against_reference(output_filename, reference_str, do_html_diff):
     """
     ref = reference_str
     out = file(output_filename, "rb").read()
-    if ref == out:
+    is_valid = (ref == out)
+    if is_valid:
         print "Output matches reference."
     elif not do_html_diff:
         print "Output and reference differ."
@@ -223,6 +224,7 @@ def match_against_reference(output_filename, reference_str, do_html_diff):
         out = out.split("\n")
         html_str = html_diff.make_file(ref, out, "Reference", "Output")
         file(html_filename, "w").write(html_str)
+    return is_valid
 
 
 ## MAIN FUNCTION
@@ -234,6 +236,19 @@ def main(argv):
     After the XML Merge Manual, this is the first piece of the code a new
     developer will read. Keep this code as simple as possible if you change
     it in any way.
+
+    These are all possible exit status codes returned or raised by main or
+    the functions it calls:
+        - On success, and if all requested validations (-s, -r) match:
+            return 0
+        - On error, e.g. wrong options (see parse_command_line()):
+            return 1
+        - On mismatch (either XML Schema (-s) or reference (-r)):
+            return mismatch_bitmap  # see end of main()
+
+    If N matching functions are provided, and all are requested and all
+    fail to match the output file, then:
+        return (2 ** N - 1) * 2  # mismatch_bitmap
     """
     # Parse command line to get options:
     options = parse_command_line(argv)
@@ -244,15 +259,24 @@ def main(argv):
     write_output_file(output_xml, options.output)
 
     # If -s: Compare output to XML Schema file:
+    matches_schema = True  # False means: match requested and negative
     if options.xml_schema is not None:
         xml_schema = read_xml_schema_file(options.xml_schema)
-        match_against_schema(output_xml, xml_schema)
+        matches_schema = match_against_schema(output_xml, xml_schema)
     
     # If -r: Compare output to reference:
+    matches_reference = True  # False means: match requested and negative
     if options.reference is not None:
         reference_str = read_reference_file(options.reference)
-        match_against_reference(options.output, reference_str,
-                                options.html_diff)
+        matches_reference = match_against_reference(options.output,
+                                                    reference_str,
+                                                    options.html_diff)
+
+    # Calculate and return the mismatch bitmap:
+    mismatch_bitmap = 0
+    mismatch_bitmap |= int(not matches_schema)    << 1  # 2 on mismatch
+    mismatch_bitmap |= int(not matches_reference) << 2  # 4 on mismatch
+    return mismatch_bitmap
 
 
 if __name__ == "__main__":
