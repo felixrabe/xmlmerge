@@ -212,9 +212,8 @@ def match_against_reference(options, reference_str):
     output_filename = options.output
     do_html_diff = options.html_diff
     
-    ref = reference_str
-    out = file(output_filename, "rb").read()
-    is_valid = (ref == out)
+    output_str = file(output_filename, "rb").read()
+    is_valid = (reference_str == output_str)
     if options.verbose >= 2:
         if is_valid:
             print "Output matches reference."
@@ -225,13 +224,21 @@ def match_against_reference(options, reference_str):
         if options.verbose >= 2:
             print ("Output and reference differ - " +
                    "generating '%s'..." % html_filename)
-        import difflib
-        html_diff = difflib.HtmlDiff(wrapcolumn=75)
-        ref = ref.split("\n")
-        out = out.split("\n")
-        html_str = html_diff.make_file(ref, out, "Reference", "Output")
-        file(html_filename, "w").write(html_str)
+        create_reference_diff_html(html_filename, reference_str,
+                                   output_str)
     return is_valid
+
+def create_reference_diff_html(html_filename, reference_str, output_str):
+    """
+    """
+    reference_str = reference_str.split("\n")
+    output_str    = output_str   .split("\n")
+    
+    import difflib
+    html_diff = difflib.HtmlDiff(wrapcolumn=75)
+    html_str = html_diff.make_file(reference_str, output_str,
+                                   "Reference",   "Output")
+    file(html_filename, "w").write(html_str)
 
 
 ## MAIN FUNCTION
