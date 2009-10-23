@@ -193,6 +193,7 @@ def match_against_schema(options, output_xml, xml_schema):
             print "Output matches XML Schema."
         else:
             print "Output invalid according to XML Schema."
+            print xml_schema.error_log.last_error
     return is_valid
 
 def read_reference_file(reference_filename):
