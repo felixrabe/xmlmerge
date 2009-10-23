@@ -178,8 +178,8 @@ def write_output_file(output_xml, output_filename):
     output_xml_tree.write(output_filename, pretty_print=True,
                           xml_declaration=True, encoding="utf-8")
 
-def compare_output_file_to_reference_string(output_filename,
-                                            reference_str, do_html_diff):
+def validate_against_reference(output_filename, reference_str,
+                               do_html_diff):
     """
     Compare output to reference.
     """
@@ -225,9 +225,8 @@ def main(argv):
     
     # If -r: Compare output to reference:
     if options.reference is not None:
-        compare_output_file_to_reference_string(options.output,
-                                                reference_str,
-                                                options.html_diff)
+        validate_against_reference(options.output, reference_str,
+                                   options.html_diff)
 
 
 if __name__ == "__main__":
