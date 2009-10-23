@@ -60,7 +60,8 @@ class OptionParser(optparse.OptionParser):
                         help=("XML Schema (.xsd) to validate output " +
                               "against"))
         self.add_option("-r", "--reference",
-                        help=("compare output to a reference XML file"))
+                        help=("reference XML file to compare output " +
+                              "against"))
         self.add_option("-d", "--html-diff", action="store_true",
                         help=("only with -r; if output and reference " +
                               "differ, produce a HTML file showing the " +
