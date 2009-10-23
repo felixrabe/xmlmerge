@@ -53,11 +53,11 @@ class OptionParser(optparse.OptionParser):
     def __init__(self, *a, **kw):
         optparse.OptionParser.__init__(self, *a, **kw)
         self.add_option("-i", "--input",
-                        help="(REQUIRED) input XML file")
+                        help=("(REQUIRED) input XML file"))
         self.add_option("-o", "--output",
-                        help="output XML file (.out.xml if not given)")
+                        help=("output XML file (.out.xml if not given)"))
         self.add_option("-r", "--reference",
-                        help="compare output to a reference XML file")
+                        help=("compare output to a reference XML file"))
         self.add_option("-d", "--html-diff", action="store_true",
                         help=("only with -r; if output and reference " +
                               "differ, produce a HTML file showing the " +
@@ -70,7 +70,7 @@ class OptionParser(optparse.OptionParser):
                         help=("show debugging messages"))
         self.add_option("-q", "--quiet", action="store_const",
                         dest="verbose", const=1,
-                        help="only show error messages")
+                        help=("only show error messages"))
         self.set_defaults(verbose=2)
 
         # Explanation: levels of verbosity
