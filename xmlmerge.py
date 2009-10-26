@@ -36,9 +36,11 @@ program or module.
 
 ## IMPORTS AND CONSTANTS
 
+import copy
 import optparse
 import os
 import sys
+
 import lxml.etree as ET
 
 # Namespace mapping (can be directly used for lxml nsmap arguments):
@@ -156,7 +158,7 @@ def preprocess_xml(input_xml):
     preprocess_xml(input_xml) -> ET._Element
     
     Preprocess the input XML Element to produce an output XML Element. The
-    input XML element tree may be changed by the call to this function. Do
+    input XML element tree may be changed by calling this function. Do
     
         >>> import copy
         >>> output_xml = preprocess_xml(copy.copy(input_xml))
@@ -165,6 +167,31 @@ def preprocess_xml(input_xml):
     after calling this function.
     """
     output_xml = input_xml
+    return output_xml
+
+def postprocess_xml(output_xml):
+    """
+    postprocess_xml(output_xml) -> ET._Element
+
+    Remove unused namespace declarations and whitespace.  Returns a
+    modified copy of output_xml, leaving the passed object unchanged.
+    """
+    # Remove unused namespace declarations:
+    # (http://codespeak.net/pipermail/lxml-dev/2009-September/004888.html)
+    ns_root = ET.Element("NS_ROOT", nsmap=xmns)
+    output_xml = copy.copy(output_xml)
+    ns_root.append(output_xml)
+    ns_root.remove(output_xml)
+    output_xmltree = ET.ElementTree(copy.copy(output_xml))
+    output_xml = output_xmltree.getroot()
+    
+    # Make pretty-printing work
+    for el in output_xml.iter():
+        if len(el) and el.text and not el.text.strip():
+            el.text = None
+        if el.tail and not el.tail.strip():
+            el.tail = None
+
     return output_xml
 
 def write_output_file(output_xml, output_filename):
@@ -283,6 +310,7 @@ def main(argv):
     # Input file => preprocessing => output file:
     input_xml = read_input_file(options.input)
     output_xml = preprocess_xml(input_xml)
+    output_xml = postprocess_xml(output_xml)
     write_output_file(output_xml, options.output)
 
     # If -s: Compare output to XML Schema file:
