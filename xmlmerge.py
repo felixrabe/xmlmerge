@@ -158,13 +158,7 @@ def preprocess_xml(input_xml):
     preprocess_xml(input_xml) -> ET._Element
     
     Preprocess the input XML Element to produce an output XML Element. The
-    input XML element tree may be changed by calling this function. Do
-    
-        >>> import copy
-        >>> output_xml = preprocess_xml(copy.copy(input_xml))
-    
-    if you want to perform further actions on the input XML element tree
-    after calling this function.
+    argument may be modified by calling this function.
     """
     output_xml = input_xml
     return output_xml
@@ -173,19 +167,21 @@ def postprocess_xml(output_xml):
     """
     postprocess_xml(output_xml) -> ET._Element
 
-    Remove unused namespace declarations and whitespace.  Returns a
-    modified copy of output_xml, leaving the passed object unchanged.
+    Remove unnecessary namespace declarations and whitespace. Returns a
+    modified copy of output_xml. The argument may be modified by calling
+    this function.
     """
     # Remove unused namespace declarations:
     # (http://codespeak.net/pipermail/lxml-dev/2009-September/004888.html)
     ns_root = ET.Element("NS_ROOT", nsmap=xmns)
-    output_xml = copy.copy(output_xml)
     ns_root.append(output_xml)
     ns_root.remove(output_xml)
-    output_xmltree = ET.ElementTree(copy.copy(output_xml))
-    output_xml = output_xmltree.getroot()
+    # If you don't perform this copy, each output_xml element's
+    # getroottree() will report the temporary tree containing the empty
+    # NS_ROOT element. This is not a hack, this is about how lxml works.
+    output_xml = ET.ElementTree(copy.copy(output_xml)).getroot()
     
-    # Make pretty-printing work
+    # Make pretty-printing work by removing unnecessary whitespace:
     for el in output_xml.iter():
         if len(el) and el.text and not el.text.strip():
             el.text = None
