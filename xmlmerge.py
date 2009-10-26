@@ -153,16 +153,6 @@ def read_input_file(input_filename):
     input_xml = ET.parse(input_filename).getroot()
     return input_xml
 
-def preprocess_xml(input_xml):
-    """
-    preprocess_xml(input_xml) -> ET._Element
-    
-    Preprocess the input XML Element to produce an output XML Element. The
-    argument may be modified by calling this function.
-    """
-    output_xml = input_xml
-    return output_xml
-
 def postprocess_xml(output_xml):
     """
     postprocess_xml(output_xml) -> ET._Element
@@ -275,6 +265,94 @@ def create_reference_diff_html(html_filename, reference_str, output_str):
     file(html_filename, "w").write(html_str)
 
 
+## XML PREPROCESS CLASS
+
+class XMLPreprocess(object):
+    """
+    Use:
+
+    >>> proc = XMLPreprocess()
+    >>> output_xml = proc(options, input_xml)  # input_xml may change
+    """
+    
+    def __call__(self, xml_element, xml_filename=None,
+                 trace_includes=False):
+        """
+        XMLPreprocess()(input_xml) -> ET._Element
+        XMLPreprocess()(input_xml, filename, True) -> ET._Element  # traced
+    
+        Preprocess the input XML Element to produce an output XML Element.
+        The argument may be modified.
+
+        If trace_includes is True, the output will contain tags that
+        surround included sections of the file.
+        """
+        ns = "{%s}" % xmns["xm"]
+        len_ns = len(ns)
+
+        # Process Loop elements:
+        for el in xml_element.xpath(".//xm:Loop", namespaces=xmns):
+            self.Loop(el)
+            el.getparent().remove(el)
+
+        # Process Include elements:
+        for el in xml_element.xpath(".//xm:Include", namespaces=xmns):
+            self.Include(el, xml_filename)
+            el.getparent().remove(el)
+
+        # Process any other elements from the XMLMerge namespace:
+        for el in xml_element.xpath(".//xm:*", namespaces=xmns):
+            tag = el.tag[len_ns:]
+            getattr(self, tag)(el)
+            el.getparent().remove(el)
+
+        return xml_element
+
+    def Loop(self, el):
+        """
+        Loop over a range of integer values.
+        """
+
+    def Include(self, el, xml_filename):
+        """
+        Include from the specified file (@file) the elements selected by
+        XPath (@select).
+        """
+
+    def AddElements(self, el):
+        """
+        Add subelements to, before, or after the element selected by XPath
+        (@to, @before or @after).
+        """
+        to = el.attrib.get("to")
+        before = el.attrib.get("before")
+        after = el.attrib.get("after")
+        assert sum((to is None, before is None, after is None)) == 2
+        select = to or before or after
+
+    def RemoveElements(self, el):
+        """
+        Remove elements selected by XPath (@select).
+        """
+
+    def SetAttribute(self, el):
+        """
+        Assign the value (@value) to the attribute (@name) of the element
+        selected by XPath (@select).
+        """
+
+    def RemoveAttribute(self, el):
+        """
+        Remove the attribute (@name) from the element selected by XPath
+        (@select).
+        """
+
+    def PythonCode(self, el):
+        """
+        Execute Python code.
+        """
+
+
 ## MAIN FUNCTION
 
 def main(argv):
@@ -305,7 +383,8 @@ def main(argv):
 
     # Input file => preprocessing => output file:
     input_xml = read_input_file(options.input)
-    output_xml = preprocess_xml(input_xml)
+    proc = XMLPreprocess()
+    output_xml = proc(input_xml, options.input, options.trace_includes)
     output_xml = postprocess_xml(output_xml)
     write_output_file(output_xml, options.output)
 
