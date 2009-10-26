@@ -139,7 +139,7 @@ def parse_command_line(argv):
     return options
 
 
-## XML PROCESSING AND COMPARISON:
+## XML PROCESSING AND COMPARISON
 
 def read_input_file(input_filename):
     """
