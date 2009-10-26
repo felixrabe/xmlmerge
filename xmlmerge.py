@@ -204,29 +204,23 @@ def match_against_schema(options, output_xml, xml_schema):
             print xml_schema.error_log.last_error
     return is_valid
 
-def read_reference_file(reference_filename):
+def match_against_reference(options, output_xml):
     """
-    read_reference_file(reference_filename) -> string
-
-    Read the reference file, and return it as a string.
-    """
-    reference_str = file(reference_filename, "rb").read()
-    return reference_str
-
-def match_against_reference(options, reference_str):
-    """
-    match_against_reference(options, reference_str) -> bool
+    match_against_reference(options, output_xml) -> bool
     
     Compare the output string (read from file options.output) to the
-    reference string. If they are not the same (bytewise), and if
-    options.html_diff is True, create an HTML file showing the differences.
+    reference string (read from options.reference). If they are not the
+    same (bytewise), and if options.html_diff is True, create an HTML file
+    showing the differences.
 
     The result is True if output and reference are the same (bytewise),
     otherwise the result is False.
     """
+    reference_filename = options.reference
     output_filename = options.output
     do_html_diff = options.html_diff
     
+    reference_str = file(reference_filename, "rb").read()
     output_str = file(output_filename, "rb").read()
     is_valid = (reference_str == output_str)
     if options.verbose >= 2:
@@ -301,8 +295,7 @@ def main(argv):
     # If -r: Compare output to reference:
     matches_reference = True  # False means: match requested and negative
     if options.reference is not None:
-        reference_str = read_reference_file(options.reference)
-        matches_reference = match_against_reference(options, reference_str)
+        matches_reference = match_against_reference(options, output_xml)
 
     # Calculate and return the mismatch bitmap:
     mismatch_bitmap = 0
