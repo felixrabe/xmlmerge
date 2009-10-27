@@ -255,13 +255,13 @@ def create_reference_diff_html(html_filename, reference_str, output_str):
     Create an HTML file (created at html_filename) showing the differrences
     between the reference string and the output string side-by-side.
     """
-    reference_str = reference_str.split("\n")
-    output_str    = output_str   .split("\n")
+    reference_lines = reference_str.split("\n")
+    output_lines    = output_str   .split("\n")
     
     import difflib
     html_diff = difflib.HtmlDiff(wrapcolumn=75)
-    html_str = html_diff.make_file(reference_str, output_str,
-                                   "Reference",   "Output")
+    html_str = html_diff.make_file(reference_lines, output_lines,
+                                   "Reference",     "Output")
     file(html_filename, "w").write(html_str)
 
 
