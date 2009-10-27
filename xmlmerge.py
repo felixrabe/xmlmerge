@@ -39,6 +39,7 @@ program or module.
 import copy
 import optparse
 import os
+import re
 import sys
 
 import lxml.etree as ET
@@ -311,10 +312,55 @@ class XMLPreprocess(object):
 
         return xml_element
 
-    def Loop(self, el):
+    _attr_substitution_regex = re.compile(r"\{(.*?)\}")
+
+    def Loop(self, loop_element):
         """
         Loop over a range of integer values.
+
+        The first attribute is evaluated as the loop counter.  Example:
+
+            i="range(5, 9)"  =>  iterates with i being 5, 6, 7, 8
+
+        The 'format' attribute determines the 
+
+        WARNING: All attributes (XPath "@*"), as well as all substitutions
+        in subelement attributes (XPath ".//@*": "...{foo_bar}...") will
+        (wholly or partially) be evaluated as Python expressions using
+        eval().
         """
+        # Get loop_counter (attribute name), format (attribute value), and
+        # all variables (attribute {name: value, ...} mapping):
+        loop_counter = None  # name of the first attribute besides 'format'
+        format = None
+        variables = {}
+        for name, value in loop_element.attrib.iteritems():
+            if name == "format":
+                format = value
+                continue
+            if loop_counter is None: # first attribute besides 'format'
+                loop_counter = name
+            variables[name] = value
+
+        # Determine the bounds of the loop counter:
+        lower_bound, upper_bound = variables[loop_counter].split("..", 1)
+        lower_bound = eval(lower_bound)
+        upper_bound = eval(upper_bound)
+
+        # Loop:
+        subst_re = self._attr_substitution_regex
+        for loop_value in xrange(lower_bound, upper_bound + 1):
+
+            # Build a Python namespace and eval() all variables:
+            namespace = {loop_counter: loop_value}
+            for name, value in variables.iteritems():
+                if name == loop_counter: continue
+                namespace[name] = eval(value, namespace, namespace)
+
+            # Loop over the subelements and their attributes:
+            for sub_element in loop_element.xpath("descendant::*"):
+                for name, value in sub_element.attrib.iteritems():
+                    for match in subst_re.finditer(value):
 
     def Include(self, el, xml_filename):
         """
