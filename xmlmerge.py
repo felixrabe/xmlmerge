@@ -312,7 +312,29 @@ class XMLPreprocess(object):
 
         return xml_element
 
-    _attr_substitution_regex = re.compile(r"\{(.*?)\}")
+    _eval_substitution_regex = re.compile(r"\{(.*?)\}")
+
+    def _eval_substitution(self, attr_value, namespace):
+        """
+        Evaluate Python expressions within strings.
+
+        Internal method to perform substitution of Python expressions
+        within attribute values, {x} -> str(eval(x)).  Example:
+
+        >>> self._attr_substitution("3 + 5 = {3 + 5} in Python", {})
+        '3 + 5 = 8 in Python'
+
+        Multiple Python expressions in one string are supported as well.
+        """
+        new_a_value = []  # faster than always concatenating strings
+        last_index = 0
+        for match in self._eval_substitution_regex.finditer(attr_value):
+            new_a_value.append(attr_value[last_index:match.start()])
+            result = str(eval(match.group(1), namespace, namespace))
+            new_a_value.append(result)
+            last_index = match.end()
+        new_a_value.append(attr_value[last_index:])
+        return "".join(new_a_value)
 
     def Loop(self, loop_element):
         """
@@ -322,45 +344,34 @@ class XMLPreprocess(object):
 
             i="range(5, 9)"  =>  iterates with i being 5, 6, 7, 8
 
-        The 'format' attribute determines the 
-
-        WARNING: All attributes (XPath "@*"), as well as all substitutions
+        WARNING: The loop counter attribute, as well as all substitutions
         in subelement attributes (XPath ".//@*": "...{foo_bar}...") will
         (wholly or partially) be evaluated as Python expressions using
         eval().
         """
-        # Get loop_counter (attribute name), format (attribute value), and
-        # all variables (attribute {name: value, ...} mapping):
-        loop_counter = None  # name of the first attribute besides 'format'
-        format = None
-        variables = {}
-        for name, value in loop_element.attrib.iteritems():
-            if name == "format":
-                format = value
-                continue
-            if loop_counter is None: # first attribute besides 'format'
-                loop_counter = name
-            variables[name] = value
-
-        # Determine the bounds of the loop counter:
-        lower_bound, upper_bound = variables[loop_counter].split("..", 1)
-        lower_bound = eval(lower_bound)
-        upper_bound = eval(upper_bound)
+        # Get the loop counter:
+        loop_counter_name = loop_element.attrib.keys()[0]
+        loop_counter_list = eval(loop_element.get(loop_counter_name))
 
         # Loop:
-        subst_re = self._attr_substitution_regex
-        for loop_value in xrange(lower_bound, upper_bound + 1):
+        addnext_to_node = loop_element  # for new elements
+        for loop_counter_value in loop_counter_list:
+            namespace = {loop_counter_name: loop_counter_value}
 
-            # Build a Python namespace and eval() all variables:
-            namespace = {loop_counter: loop_value}
-            for name, value in variables.iteritems():
-                if name == loop_counter: continue
-                namespace[name] = eval(value, namespace, namespace)
+            # Create a copy of the direct descendants:
+            child_copies = []  # for the current Loop iteration
+            for child in loop_element:  # includes non-elements by choice
+                child_copies.append(copy.copy(child))
+                addnext_to_node.addnext(child_copies[-1])
+                addnext_to_node = child_copies[-1]
 
-            # Loop over the subelements and their attributes:
-            for sub_element in loop_element.xpath("descendant::*"):
-                for name, value in sub_element.attrib.iteritems():
-                    for match in subst_re.finditer(value):
+            # Perform {x} -> str(eval(x)) substitution in all attributes of
+            # all descendants:
+            for sub_elem in loop_element.xpath("descendant::*"):
+                for attr_name, attr_value in sub_elem.items():
+                    # Perform attribute substitution:
+                    v = self._eval_substitution(attr_value, namespace)
+                    sub_elem.set(attr_name, v)
 
     def Include(self, el, xml_filename):
         """
