@@ -37,6 +37,7 @@ program or module.
 ## IMPORTS AND CONSTANTS
 
 import copy
+import itertools
 import optparse
 import os
 import re
@@ -367,7 +368,8 @@ class XMLPreprocess(object):
 
             # Perform {x} -> str(eval(x)) substitution in all attributes of
             # all descendants:
-            for sub_elem in loop_element.xpath("descendant::*"):
+            all_descendants_iter = (c.xpath(".//*") for c in child_copies)
+            for sub_elem in itertools.chain(*all_descendants_iter):
                 for attr_name, attr_value in sub_elem.items():
                     # Perform attribute substitution:
                     v = self._eval_substitution(attr_value, namespace)
