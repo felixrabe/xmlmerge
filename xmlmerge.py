@@ -286,6 +286,9 @@ class XMLPreprocess(object):
 
         If trace_includes is True, the output will contain tags that
         surround included sections of the file.
+
+        Inclusion will recursively call this method (__call__) for
+        preprocessing the included file and for recursive inclusion.
         """
         ns = "{%s}" % xmns["xm"]
         len_ns = len(ns)
