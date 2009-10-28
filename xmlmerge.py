@@ -337,6 +337,9 @@ class XMLPreprocess(object):
         new_a_value.append(attr_value[last_index:])
         return "".join(new_a_value)
 
+    def Var(self, var_element):
+        pass
+
     def Loop(self, loop_element):
         """
         Loop over a range of integer values.
