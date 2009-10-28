@@ -354,7 +354,7 @@ class XMLPreprocess(object):
         eval().
         """
         # Get the loop counter:
-        loop_counter_name = loop_element.attrib.keys()[0]
+        loop_counter_name = loop_element.keys()[0]
         loop_counter_list = eval(loop_element.get(loop_counter_name))
 
         # Loop:
@@ -389,9 +389,9 @@ class XMLPreprocess(object):
         Add subelements to, before, or after the element selected by XPath
         (@to, @before or @after).
         """
-        to = el.attrib.get("to")
-        before = el.attrib.get("before")
-        after = el.attrib.get("after")
+        to = el.get("to")
+        before = el.get("before")
+        after = el.get("after")
         assert sum((to is None, before is None, after is None)) == 2
         select = to or before or after
 
