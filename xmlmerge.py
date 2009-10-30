@@ -322,7 +322,7 @@ class XMLPreprocess(object):
 
         # Process Include elements:
         for el in xml_element.xpath(".//xm:Include", namespaces=xmns):
-            self.Include(el, xml_filename)
+            self.Include(el)
             el.getparent().remove(el)
 
         # Process any other elements from the XMLMerge namespace:
@@ -398,7 +398,7 @@ class XMLPreprocess(object):
                     v = self._eval_substitution(attr_value, namespace)
                     sub_elem.set(attr_name, v)
 
-    def Include(self, el, xml_filename):
+    def Include(self, el):
         """
         Include from the specified file (@file) the elements selected by
         XPath (@select).
