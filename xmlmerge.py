@@ -277,17 +277,21 @@ class XMLPreprocess(object):
     >>> output_xml = proc(options, input_xml)  # input_xml may change
     """
     
-    def __call__(self, xml_element, xml_filename=None,
-                 trace_includes=False):
+    def __call__(self, xml_element, namespace=None,
+                 trace_includes=False, xml_filename=None):
         """
-        XMLPreprocess()(input_xml) -> ET._Element
-        XMLPreprocess()(input_xml, filename, True) -> ET._Element  # traced
+        XMLPreprocess()(...) -> ET._Element
     
         Preprocess the input XML Element to produce an output XML Element.
-        The argument may be modified.
+        The xml_element argument may be modified.
+
+        The namespace given should be a dict that can be used as a Python
+        namespace. This namespace will be used and modified in attribute
+        substitution, as well as xm:Include, xm:Loop, and xm:Var elements.
 
         If trace_includes is True, the output will contain tags that
-        surround included sections of the file.
+        surround included sections of the file. The xml_filename argument
+        is then required.
 
         Inclusion will recursively call this method (__call__) for
         preprocessing the included file and for recursive inclusion.
@@ -461,7 +465,7 @@ def main(argv):
     # Input file => preprocessing => output file:
     input_xml = read_input_file(options.input)
     proc = XMLPreprocess()
-    output_xml = proc(input_xml, options.input, options.trace_includes)
+    output_xml = proc(input_xml, trace_includes=options.trace_includes, xml_filename=options.input)
     output_xml = postprocess_xml(output_xml)
     write_output_file(output_xml, options.output)
 
