@@ -286,8 +286,8 @@ class XMLPreprocess(object):
         The xml_element argument may be modified.
 
         The namespace given should be a dict that can be used as a Python
-        namespace. This namespace will be used and modified in attribute
-        substitution, as well as xm:Include, xm:Loop, and xm:Var elements.
+        namespace. This namespace will be used in XML attribute
+        substitution, and modified by the xm:Loop and xm:Var elements.
 
         If trace_includes is True, the output will contain tags that
         surround included sections of the file. The xml_filename argument
@@ -296,6 +296,10 @@ class XMLPreprocess(object):
         Inclusion will recursively call this method (__call__) for
         preprocessing the included file and for recursive inclusion.
         """
+        self.namespace = namespace or {}
+        self.trace_includes = trace_includes
+        self.xml_filename = xml_filename
+        
         ns = "{%s}" % xmns["xm"]
         len_ns = len(ns)
 
