@@ -370,30 +370,36 @@ class XMLPreprocess(object):
         (wholly or partially) be evaluated as Python expressions using
         eval().
         """
-        # Get the loop counter:
+        # Get the loop counter name and list:
         loop_counter_name = loop_element.keys()[0]
         loop_counter_list = eval(loop_element.get(loop_counter_name))
 
         # Loop:
         addnext_to_node = loop_element  # for new elements
         for loop_counter_value in loop_counter_list:
-            namespace = {loop_counter_name: loop_counter_value}
+            self.namespace.update({loop_counter_name: loop_counter_value})
+            loop_copy = copy.copy(loop_element)
 
-            # Create a copy of the direct descendants:
-            child_copies = []  # for the current Loop iteration
-            for child in loop_element:  # includes non-elements by choice
-                child_copies.append(copy.copy(child))
-                addnext_to_node.addnext(child_copies[-1])
-                addnext_to_node = child_copies[-1]
+            self(loop_copy, self.namespace)
 
-            # Perform {x} -> str(eval(x)) substitution in all attributes of
-            # all descendants:
-            all_descendants_iter = (c.xpath(".//*") for c in child_copies)
-            for sub_elem in itertools.chain(*all_descendants_iter):
-                for attr_name, attr_value in sub_elem.items():
-                    # Perform attribute substitution:
-                    v = self._eval_substitution(attr_value, namespace)
-                    sub_elem.set(attr_name, v)
+            if False:
+                # Find all children that are not children of descendant xm:Loop
+                # elements:
+                child_list = loop_copy.xpath(".//*")
+                lower_loop_child_set = set(loop_copy.xpath(".//xm:Loop/*",
+                                                           namespaces=xmns))
+                interesting_set = set(child_list) - lower_loop_child_set
+                child_list = sorted(interesting_set, key=child_list.index)
+
+                # Perform {x} -> str(eval(x)) substitution in all attributes of
+                # all descendants:
+                for child in child_list:
+                    for attr_name, attr_value in child.items():  # attr map
+                        v = self._eval_substitution(attr_value, namespace)
+
+            for child in loop_copy:
+                addnext_to_node.addnext(child)
+                addnext_to_node = child
 
     def Include(self, el):
         """
