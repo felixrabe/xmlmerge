@@ -110,10 +110,7 @@ def parse_command_line(argv):
         assert args == []
         assert options.input is not None
     except:
-        print "Error: invalid argument list"
-        print
-        option_parser.print_help()
-        raise SystemExit, 1
+        option_parser.error("Error: invalid argument list")
 
     # If the output option has been omitted, build the output filename from
     # the input filename, resulting in the file extension ".out.xml":
