@@ -447,8 +447,8 @@ def main(argv):
     developer will read. Keep this code as simple as possible if you change
     it in any way.
 
-    These are all possible exit status codes returned or raised by main or
-    the functions it calls:
+    These are all possible exit status codes returned or raised (using
+    SystemExit) by main or the functions it calls:
         - On success, and if all requested validations (-s, -r) match:
             return 0
         - On error, e.g. wrong options (see parse_command_line()):
