@@ -300,7 +300,6 @@ class XMLPreprocess(object):
         Processing tags will recursively call this method (__call__) for
         preprocessing the included file and for recursive inclusion.
         """
-        print "Processing", xml_element.tag
         if namespace is not None:
             self._namespace_stack.append(namespace)
         self.namespace = self._namespace_stack[-1]
