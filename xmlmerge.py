@@ -393,7 +393,7 @@ class XMLPreprocess(object):
 
     def _xm_removeelements(self, xml_element):
         """
-        Remove elements selected by XPath (@select).
+        Remove (zero or more) elements selected by XPath (@select).
         """
 
     def _xm_setattribute(self, xml_element):
