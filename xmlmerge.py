@@ -342,7 +342,12 @@ class XMLPreprocess(object):
         return "".join(new_a_value)
 
     def _xm_var(self, xml_element):
-        pass
+        """
+        Set a variable.
+        """
+        ns = self.namespace
+        for attr_name, attr_value in xml_element.items():  # attr map
+            ns[attr_name] = eval(attr_value, ns, ns)
 
     def _xm_loop(self, xml_element):
         """
