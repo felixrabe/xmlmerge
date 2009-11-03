@@ -277,10 +277,10 @@ class XMLPreprocess(object):
     def __call__(self, xml_element, namespace=None,
                  trace_includes=False, xml_filename=None):
         """
-        XMLPreprocess()(...) -> ET._Element
+        XMLPreprocess()(...)
     
-        Preprocess the input XML Element to produce an output XML Element.
-        The xml_element argument may be modified.
+        Preprocess the input XML Element, xml_element. The element tree of
+        xml_element will be modified in-place.
 
         The namespace given should be a dict that can be used as a Python
         namespace. This namespace will be used in XML attribute
