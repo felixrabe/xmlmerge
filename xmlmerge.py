@@ -363,6 +363,12 @@ class XMLPreprocess(object):
         assert sum((to is None, before is None, after is None)) == 2
         select = to or before or after
 
+    def _xm_block(self, xml_element):
+        """
+        Create a scope to contain visibility of newly assigned Python
+        variables.
+        """
+
     def _xm_comment(self, xml_element):
         """
         A comment that is removed by XML Merge.
