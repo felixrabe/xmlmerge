@@ -311,7 +311,7 @@ class XMLPreprocess(object):
 
         # Evaluate Python expressions in the attributes of xml_element:
         for attr_name, attr_value in xml_element.items():  # attr map
-            v = self._eval_substitution(attr_value, self.namespace)
+            v = self._eval_substitution(attr_value)
             xml_element.set(attr_name, v)
 
         # If xml_element has xmns["xm"] as its namespace, proceed with the
@@ -341,27 +341,28 @@ class XMLPreprocess(object):
 
     _eval_substitution_regex = re.compile(r"\{(.*?)\}")
 
-    def _eval_substitution(self, attr_value, namespace):
+    def _eval_substitution(self, string):
         """
         Evaluate Python expressions within strings.
 
         Internal method to perform substitution of Python expressions
         within attribute values, {x} -> str(eval(x)).  Example:
 
-        >>> self._eval_substitution("3 + 5 = {3 + 5} in Python", {})
+        >>> self._eval_substitution("3 + 5 = {3 + 5} in Python")
         '3 + 5 = 8 in Python'
 
         Multiple Python expressions in one string are supported as well.
         """
-        new_a_value = []  # faster than always concatenating strings
+        new_str = []  # faster than always concatenating strings
         last_index = 0
-        for match in self._eval_substitution_regex.finditer(attr_value):
-            new_a_value.append(attr_value[last_index:match.start()])
-            result = str(eval(match.group(1), namespace))
-            new_a_value.append(result)
+        for match in self._eval_substitution_regex.finditer(string):
+            new_str.append(string[last_index:match.start()])
+            expression = match.group(1)
+            result = str(eval(expression, self.namespace))
+            new_str.append(result)
             last_index = match.end()
-        new_a_value.append(attr_value[last_index:])
-        return "".join(new_a_value)
+        new_str.append(string[last_index:])
+        return "".join(new_str)
 
     def _xm_addelements(self, xml_element):
         """
