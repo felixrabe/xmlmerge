@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+  <a>
+      <this i="123" j="456"/>
+      <that i="14" j="88"/>
+      <else j="1"/>
+  </a>
+  <xm:RemoveAttributes select="/Test/a/*" name="j"/>
+  <b first="hey" second="my cat" last="you"/>
+  <b first="you" second="nothing" last="that car"/>
+  <b hour="11" minute="12" second="55"/>
+  <xm:RemoveAttributes select="/Test/b[@first]" name="second"/>
+</Test>

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test>
+  <a>
+    <this i="123"/>
+    <that i="14"/>
+    <else/>
+  </a>
+  <b first="hey" last="you"/>
+  <b first="you" last="that car"/>
+  <b hour="11" minute="12" second="55"/>
+</Test>
