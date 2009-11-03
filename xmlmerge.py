@@ -310,6 +310,8 @@ class XMLPreprocess(object):
         if xml_element.nsmap.get(xml_element.prefix) == xmns["xm"]:
             tag = xml_element.tag[len_ns:]  # just the tag without namespc
             method = "_xm_" + tag.lower()  # tolerate any case
+            if not hasattr(self, method):
+                raise Exception, "cannot process <xm:%s/>" % tag
             getattr(self, method)(xml_element)  # call the method
             xml_element.getparent().remove(xml_element)
 
