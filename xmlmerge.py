@@ -355,7 +355,7 @@ class XMLPreprocess(object):
         last_index = 0
         for match in self._eval_substitution_regex.finditer(attr_value):
             new_a_value.append(attr_value[last_index:match.start()])
-            result = str(eval(match.group(1), namespace, namespace))
+            result = str(eval(match.group(1), namespace))
             new_a_value.append(result)
             last_index = match.end()
         new_a_value.append(attr_value[last_index:])
@@ -410,7 +410,8 @@ class XMLPreprocess(object):
         """
         # Get the loop counter name and list:
         loop_counter_name = xml_element.keys()[0]
-        loop_counter_list = eval(xml_element.get(loop_counter_name))
+        loop_counter_list = eval(xml_element.get(loop_counter_name),
+                                 self.namespace)
 
         # Loop:
         addnext_to_node = xml_element  # for new elements
