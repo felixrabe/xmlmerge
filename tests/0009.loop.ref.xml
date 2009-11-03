@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test>
+  <FirstElement i="0">
+    <Hex>0x00</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="0"/>
+    <SecondElement j="2"/>
+    <MULTI plied="0"/>
+    <SecondElement j="3"/>
+    <MULTI plied="0"/>
+    <SecondElement j="4"/>
+    <MULTI plied="0"/>
+  </FirstElement>
+  <FirstElement i="1">
+    <Hex>0x01</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="1"/>
+    <SecondElement j="2"/>
+    <MULTI plied="2"/>
+    <SecondElement j="3"/>
+    <MULTI plied="3"/>
+    <SecondElement j="4"/>
+    <MULTI plied="4"/>
+  </FirstElement>
+  <FirstElement i="2">
+    <Hex>0x02</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="2"/>
+    <SecondElement j="2"/>
+    <MULTI plied="4"/>
+    <SecondElement j="3"/>
+    <MULTI plied="6"/>
+    <SecondElement j="4"/>
+    <MULTI plied="8"/>
+  </FirstElement>
+  <FirstElement i="3">
+    <Hex>0x03</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="3"/>
+    <SecondElement j="2"/>
+    <MULTI plied="6"/>
+    <SecondElement j="3"/>
+    <MULTI plied="9"/>
+    <SecondElement j="4"/>
+    <MULTI plied="12"/>
+  </FirstElement>
+  <FirstElement i="4">
+    <Hex>0x04</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="4"/>
+    <SecondElement j="2"/>
+    <MULTI plied="8"/>
+    <SecondElement j="3"/>
+    <MULTI plied="12"/>
+    <SecondElement j="4"/>
+    <MULTI plied="16"/>
+  </FirstElement>
+  <FirstElement i="5">
+    <Hex>0x05</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="5"/>
+    <SecondElement j="2"/>
+    <MULTI plied="10"/>
+    <SecondElement j="3"/>
+    <MULTI plied="15"/>
+    <SecondElement j="4"/>
+    <MULTI plied="20"/>
+  </FirstElement>
+  <FirstElement i="6">
+    <Hex>0x06</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="6"/>
+    <SecondElement j="2"/>
+    <MULTI plied="12"/>
+    <SecondElement j="3"/>
+    <MULTI plied="18"/>
+    <SecondElement j="4"/>
+    <MULTI plied="24"/>
+  </FirstElement>
+  <FirstElement i="7">
+    <Hex>0x07</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="7"/>
+    <SecondElement j="2"/>
+    <MULTI plied="14"/>
+    <SecondElement j="3"/>
+    <MULTI plied="21"/>
+    <SecondElement j="4"/>
+    <MULTI plied="28"/>
+  </FirstElement>
+  <FirstElement i="8">
+    <Hex>0x08</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="8"/>
+    <SecondElement j="2"/>
+    <MULTI plied="16"/>
+    <SecondElement j="3"/>
+    <MULTI plied="24"/>
+    <SecondElement j="4"/>
+    <MULTI plied="32"/>
+  </FirstElement>
+  <FirstElement i="9">
+    <Hex>0x09</Hex>
+    <SecondElement j="0"/>
+    <MULTI plied="0"/>
+    <SecondElement j="1"/>
+    <MULTI plied="9"/>
+    <SecondElement j="2"/>
+    <MULTI plied="18"/>
+    <SecondElement j="3"/>
+    <MULTI plied="27"/>
+    <SecondElement j="4"/>
+    <MULTI plied="36"/>
+  </FirstElement>
+</Test>

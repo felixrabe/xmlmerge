@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+    <xm:Loop mycounter="range(10)">
+        <FirstElement i="{mycounter}">
+            <Hex><xm:Text>0x{format(mycounter, '02X')}</xm:Text></Hex>
+            <xm:Block>
+                <xm:Var i="mycounter"/>
+                <xm:Loop mycounter="range(5)">
+                    <SecondElement j="{mycounter}"/>
+                    <MULTI plied="{i * mycounter}"/>
+                </xm:Loop>
+            </xm:Block>
+        </FirstElement>
+    </xm:Loop>
+</Test>
