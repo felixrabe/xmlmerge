@@ -328,8 +328,10 @@ class XMLPreprocess(object):
         return None
 
     def _recurse_into(self, xml_element, namespace=None):
+        if namespace is not None:
+            self._namespace_stack.append(namespace)
         for xml_sub_element in xml_element.xpath("*"):
-            self(xml_sub_element, namespace,
+            self(xml_sub_element, None,
                  self.trace_includes, self.xml_filename)
 
     _eval_substitution_regex = re.compile(r"\{(.*?)\}")
