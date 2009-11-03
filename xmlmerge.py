@@ -363,6 +363,12 @@ class XMLPreprocess(object):
         assert sum((to is None, before is None, after is None)) == 2
         select = to or before or after
 
+    def _xm_comment(self, xml_element):
+        """
+        A comment that is removed by XML Merge.
+        """
+        pass  # that's it
+
     def _xm_include(self, xml_element):
         """
         Include from the specified file (@file) the elements selected by
