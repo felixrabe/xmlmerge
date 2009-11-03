@@ -348,7 +348,7 @@ class XMLPreprocess(object):
         Internal method to perform substitution of Python expressions
         within attribute values, {x} -> str(eval(x)).  Example:
 
-        >>> self._attr_substitution("3 + 5 = {3 + 5} in Python", {})
+        >>> self._eval_substitution("3 + 5 = {3 + 5} in Python", {})
         '3 + 5 = 8 in Python'
 
         Multiple Python expressions in one string are supported as well.
