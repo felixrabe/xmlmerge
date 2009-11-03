@@ -382,7 +382,7 @@ class XMLPreprocess(object):
         E.g. assignments to list items will be visible to outside scopes!
         """
         self._recurse_into(xml_element, self.namespace.copy())
-        for xml_sub_element in xml_element[::-1]:
+        for xml_sub_element in xml_element[::-1]:  # get children backwards
             xml_element.addnext(xml_sub_element)
 
     def _xm_comment(self, xml_element):
