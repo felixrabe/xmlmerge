@@ -479,6 +479,15 @@ class XMLPreprocess(object):
             <Object index="0x1234" otherattr="hello"/>
         """
 
+    def _xm_text(self, xml_element):
+        """
+        Perform '{}' substitution on text.
+        """
+        text = xml_element.text
+        if text is None: return
+        tail = self._eval_substitution(text) + (xml_element.tail or "")
+        xml_element.tail = tail
+
     def _xm_var(self, xml_element):
         """
         Set a variable.
