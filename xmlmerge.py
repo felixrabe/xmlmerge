@@ -295,7 +295,7 @@ class XMLPreprocess(object):
         surround included sections of the file. The xml_filename argument
         is then required.
 
-        Inclusion will recursively call this method (__call__) for
+        Processing tags will recursively call this method (__call__) for
         preprocessing the included file and for recursive inclusion.
         """
         print "Processing", xml_element.tag
@@ -448,6 +448,13 @@ class XMLPreprocess(object):
         """
         Assign the value (@value) to the attribute (@name) of the element
         selected by XPath (@select).
+
+        Example:
+            <Object index="0x1234"/>
+            <xm:SetAttribute name="otherattr" value="hallo"/>
+
+        Leads to:
+            <Object index="0x1234" otherattr="hello"/>
         """
 
     def _xm_var(self, xml_element):
