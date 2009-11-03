@@ -324,10 +324,10 @@ class XMLPreprocess(object):
             getattr(self, method)(xml_element)  # call the method
             # Preserve tail text:
             tail = xml_element.tail
-            if tail:
+            if tail is not None:
                 prev = xml_element.getprevious()
                 parent = xml_element.getparent()
-                if prev:
+                if prev is not None:
                     prev.tail = (prev.tail or "") + tail
                 else:
                     parent.text = (parent.text or "") + tail
