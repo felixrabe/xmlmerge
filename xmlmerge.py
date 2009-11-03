@@ -333,6 +333,8 @@ class XMLPreprocess(object):
         for xml_sub_element in xml_element.xpath("*"):
             self(xml_sub_element, None,
                  self.trace_includes, self.xml_filename)
+        if namespace is not None:
+            self.namespace = self._namespace_stack.pop()
 
     _eval_substitution_regex = re.compile(r"\{(.*?)\}")
 
