@@ -429,23 +429,23 @@ def main(argv):
     options = parse_command_line(argv)
 
     # Input file => preprocessing => output file:
-    input_xml = read_input_file(options.input)
+    xml = read_input_file(options.input)
     proc = XMLPreprocess()
-    output_xml = proc(input_xml, trace_includes=options.trace_includes, xml_filename=options.input)
-    output_xml = postprocess_xml(output_xml)
-    write_output_file(output_xml, options.output)
+    proc(xml, trace_includes=options.trace_includes,
+         xml_filename=options.input)
+    xml = postprocess_xml(xml)
+    write_output_file(xml, options.output)
 
     # If -s: Compare output to XML Schema file:
     matches_schema = True  # False means: match requested and negative
     if options.xml_schema is not None:
         xml_schema = read_xml_schema_file(options.xml_schema)
-        matches_schema = match_against_schema(options, output_xml,
-                                              xml_schema)
+        matches_schema = match_against_schema(options, xml, xml_schema)
     
     # If -r: Compare output to reference:
     matches_reference = True  # False means: match requested and negative
     if options.reference is not None:
-        matches_reference = match_against_reference(options, output_xml)
+        matches_reference = match_against_reference(options, xml)
 
     # Calculate and return the mismatch bitmap:
     mismatch_bitmap = 0
