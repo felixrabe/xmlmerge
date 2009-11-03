@@ -42,6 +42,7 @@ import optparse
 import os
 import re
 import sys
+import textwrap
 
 import lxml.etree as ET
 
@@ -418,10 +419,19 @@ class XMLPreprocess(object):
         for loop_counter_value in loop_counter_list:
             pass
 
-    def _xm_pythoncode(self, xml_element):
+    def _xm_pythonexec(self, xml_element):
         """
-        Execute Python code.
+        Execute Python code in the current namespace.
+
+        'self' and 'xml_element' are supplied temporarily. They are added
+        to the current namespace before the 'exec' statement, and removed
+        again afterwards.
         """
+        code = textwrap.dedent(xml_element.text).strip()
+        self.namespace["self"] = self
+        self.namespace["xml_element"] = xml_element
+        exec code in self.namespace
+        del self.namespace["self"], self.namespace["xml_element"]
 
     def _xm_removeattribute(self, xml_element):
         """
