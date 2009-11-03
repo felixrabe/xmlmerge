@@ -273,6 +273,10 @@ class XMLPreprocess(object):
     >>> proc = XMLPreprocess()
     >>> output_xml = proc(options, input_xml)  # input_xml may change
     """
+
+    def __init__(self):
+        super(XMLPreprocess, self).__init__()
+        self._namespace_stack = [{}]
     
     def __call__(self, xml_element, namespace=None,
                  trace_includes=False, xml_filename=None):
@@ -293,7 +297,9 @@ class XMLPreprocess(object):
         Inclusion will recursively call this method (__call__) for
         preprocessing the included file and for recursive inclusion.
         """
-        self.namespace = namespace or {}
+        if namespace is not None:
+            self._namespace_stack.append(namespace)
+        self.namespace = self._namespace_stack[-1]
         self.trace_includes = trace_includes
         self.xml_filename = xml_filename
         
@@ -315,7 +321,12 @@ class XMLPreprocess(object):
             getattr(self, method)(xml_element)  # call the method
             xml_element.getparent().remove(xml_element)
 
-        return xml_element
+        # If not, recurse:
+        else:
+            for xml_sub_element in xml_element.xpath("*"):
+                self(xml_sub_element, None, trace_includes, xml_filename)
+
+        return None
 
     _eval_substitution_regex = re.compile(r"\{(.*?)\}")
 
