@@ -300,33 +300,7 @@ class XMLPreprocess(object):
         ns = "{%s}" % xmns["xm"]
         len_ns = len(ns)
 
-        # Process Loop elements:
-        # for el in xml_element.xpath(".//xm:Loop", namespaces=xmns):
-        #     self.Loop(el)
-        #     el.getparent().remove(el)
         
-        # WORKAROUND for the above:
-        while True:
-            el = xml_element.xpath(".//xm:Loop[1]", namespaces=xmns)
-            if not el: break
-            el = el[0]
-            self.Loop(el)
-            el.getparent().remove(el)
-            # This hack should prevent lxml (at least 2.1.1 and 2.2.2) from
-            # crashing the Python interpreter (at least 2.5.x and 2.6.x) on
-            # Windows XP (SP3).
-            xml_element = ET.XML(ET.tostring(xml_element))
-
-        # Process Include elements:
-        for el in xml_element.xpath(".//xm:Include", namespaces=xmns):
-            self.Include(el)
-            el.getparent().remove(el)
-
-        # Process any other elements from the XMLMerge namespace:
-        for el in xml_element.xpath(".//xm:*", namespaces=xmns):
-            tag = el.tag[len_ns:]
-            getattr(self, tag)(el)
-            el.getparent().remove(el)
 
         return xml_element
 
