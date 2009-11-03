@@ -300,14 +300,18 @@ class XMLPreprocess(object):
         ns = "{%s}" % xmns["xm"]
         len_ns = len(ns)
 
-        # for el in doc.xpath("//xm:*", **n): print el.tag, (el.xpath("(.//xm:*|following::xm:*)[1]", **n) or [ET.Element("NULL")])[0].tag
+        # Evaluate Python expressions in the attributes of xml_element:
+        for attr_name, attr_value in xml_element.items():  # attr map
+            v = self._eval_substitution(attr_value, self.namespace)
+            xml_element.set(attr_name, v)
 
-        # if False:
-        #     child_list = loop_copy.xpath(".//*")
-        #     lower_loop_child_set = set(loop_copy.xpath(".//xm:Loop/*",
-        #                                                namespaces=xmns))
-        #     interesting_set = set(child_list) - lower_loop_child_set
-        #     child_list = sorted(interesting_set, key=child_list.index)
+        # If xml_element has xmns["xm"] as its namespace, proceed with the
+        # appropriate method of this class:
+        if xml_element.nsmap.get(xml_element.prefix) == xmns["xm"]:
+            tag = xml_element.tag[len_ns:]  # just the tag without namespc
+            method = "_xm_" + tag.lower()  # tolerate any case
+            getattr(self, method)(xml_element)  # call the method
+            xml_element.getparent().remove(xml_element)
 
         return xml_element
 
@@ -335,10 +339,10 @@ class XMLPreprocess(object):
         new_a_value.append(attr_value[last_index:])
         return "".join(new_a_value)
 
-    def Var(self, var_element):
+    def _xm_var(self, var_element):
         pass
 
-    def Loop(self, loop_element):
+    def _xm_loop(self, loop_element):
         """
         Loop over a range of integer values.
 
@@ -360,13 +364,13 @@ class XMLPreprocess(object):
         for loop_counter_value in loop_counter_list:
             pass
 
-    def Include(self, el):
+    def _xm_include(self, el):
         """
         Include from the specified file (@file) the elements selected by
         XPath (@select).
         """
 
-    def AddElements(self, el):
+    def _xm_addelements(self, el):
         """
         Add subelements to, before, or after the element selected by XPath
         (@to, @before or @after).
@@ -377,24 +381,24 @@ class XMLPreprocess(object):
         assert sum((to is None, before is None, after is None)) == 2
         select = to or before or after
 
-    def RemoveElements(self, el):
+    def _xm_removeelements(self, el):
         """
         Remove elements selected by XPath (@select).
         """
 
-    def SetAttribute(self, el):
+    def _xm_setattribute(self, el):
         """
         Assign the value (@value) to the attribute (@name) of the element
         selected by XPath (@select).
         """
 
-    def RemoveAttribute(self, el):
+    def _xm_removeattribute(self, el):
         """
         Remove the attribute (@name) from the element selected by XPath
         (@select).
         """
 
-    def PythonCode(self, el):
+    def _xm_pythoncode(self, el):
         """
         Execute Python code.
         """
