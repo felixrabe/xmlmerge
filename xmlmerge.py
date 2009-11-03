@@ -322,6 +322,15 @@ class XMLPreprocess(object):
             if not hasattr(self, method):
                 raise Exception, "cannot process <xm:%s/>" % tag
             getattr(self, method)(xml_element)  # call the method
+            # Preserve tail text:
+            tail = xml_element.tail
+            if tail:
+                prev = xml_element.getprevious()
+                parent = xml_element.getparent()
+                if prev:
+                    prev.tail = (prev.tail or "") + tail
+                else:
+                    parent.text = (parent.text or "") + tail
             xml_element.getparent().remove(xml_element)
 
         # If not, recurse:
