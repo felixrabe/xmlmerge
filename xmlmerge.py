@@ -341,13 +341,22 @@ class XMLPreprocess(object):
         new_a_value.append(attr_value[last_index:])
         return "".join(new_a_value)
 
-    def _xm_var(self, xml_element):
+    def _xm_addelements(self, xml_element):
         """
-        Set a variable.
+        Add subelements to, before, or after the element selected by XPath
+        (@to, @before or @after).
         """
-        ns = self.namespace
-        for attr_name, attr_value in xml_element.items():  # attr map
-            ns[attr_name] = eval(attr_value, ns, ns)
+        to = xml_element.get("to")
+        before = xml_element.get("before")
+        after = xml_element.get("after")
+        assert sum((to is None, before is None, after is None)) == 2
+        select = to or before or after
+
+    def _xm_include(self, xml_element):
+        """
+        Include from the specified file (@file) the elements selected by
+        XPath (@select).
+        """
 
     def _xm_loop(self, xml_element):
         """
@@ -371,22 +380,16 @@ class XMLPreprocess(object):
         for loop_counter_value in loop_counter_list:
             pass
 
-    def _xm_include(self, xml_element):
+    def _xm_pythoncode(self, xml_element):
         """
-        Include from the specified file (@file) the elements selected by
-        XPath (@select).
+        Execute Python code.
         """
 
-    def _xm_addelements(self, xml_element):
+    def _xm_removeattribute(self, xml_element):
         """
-        Add subelements to, before, or after the element selected by XPath
-        (@to, @before or @after).
+        Remove the attribute (@name) from the element selected by XPath
+        (@select).
         """
-        to = xml_element.get("to")
-        before = xml_element.get("before")
-        after = xml_element.get("after")
-        assert sum((to is None, before is None, after is None)) == 2
-        select = to or before or after
 
     def _xm_removeelements(self, xml_element):
         """
@@ -399,16 +402,13 @@ class XMLPreprocess(object):
         selected by XPath (@select).
         """
 
-    def _xm_removeattribute(self, xml_element):
+    def _xm_var(self, xml_element):
         """
-        Remove the attribute (@name) from the element selected by XPath
-        (@select).
+        Set a variable.
         """
-
-    def _xm_pythoncode(self, xml_element):
-        """
-        Execute Python code.
-        """
+        ns = self.namespace
+        for attr_name, attr_value in xml_element.items():  # attr map
+            ns[attr_name] = eval(attr_value, ns, ns)
 
 
 ## MAIN FUNCTION
