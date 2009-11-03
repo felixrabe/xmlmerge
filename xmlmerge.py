@@ -392,8 +392,8 @@ class XMLPreprocess(object):
         E.g. assignments to list items will be visible to outside scopes!
         """
         self._recurse_into(xml_element, self.namespace.copy())
-        for xml_sub_element in xml_element[::-1]:  # get children backwards
-            xml_element.addnext(xml_sub_element)
+        for xml_sub_node in xml_element[::-1]:  # get children reversed
+            xml_element.addnext(xml_sub_node)
 
     def _xm_comment(self, xml_element):
         """
@@ -428,7 +428,12 @@ class XMLPreprocess(object):
         # Loop:
         addnext_to_node = xml_element  # for new elements
         for loop_counter_value in loop_counter_list:
-            pass
+            self.namespace[loop_counter_name] = loop_counter_value
+            xml_element_copy = copy.copy(xml_element)
+            self._recurse_into(xml_element_copy)
+            for xml_sub_node in xml_element_copy[:]:
+                addnext_to_node.addnext(xml_sub_node)
+                addnext_to_node = xml_sub_node
 
     def _xm_pythonexec(self, xml_element):
         """
