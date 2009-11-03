@@ -300,7 +300,14 @@ class XMLPreprocess(object):
         ns = "{%s}" % xmns["xm"]
         len_ns = len(ns)
 
-        
+        # for el in doc.xpath("//xm:*", **n): print el.tag, (el.xpath("(.//xm:*|following::xm:*)[1]", **n) or [ET.Element("NULL")])[0].tag
+
+        # if False:
+        #     child_list = loop_copy.xpath(".//*")
+        #     lower_loop_child_set = set(loop_copy.xpath(".//xm:Loop/*",
+        #                                                namespaces=xmns))
+        #     interesting_set = set(child_list) - lower_loop_child_set
+        #     child_list = sorted(interesting_set, key=child_list.index)
 
         return xml_element
 
@@ -351,29 +358,7 @@ class XMLPreprocess(object):
         # Loop:
         addnext_to_node = loop_element  # for new elements
         for loop_counter_value in loop_counter_list:
-            self.namespace.update({loop_counter_name: loop_counter_value})
-            loop_copy = copy.copy(loop_element)
-
-            self(loop_copy, self.namespace)
-
-            if False:
-                # Find all children that are not children of descendant xm:Loop
-                # elements:
-                child_list = loop_copy.xpath(".//*")
-                lower_loop_child_set = set(loop_copy.xpath(".//xm:Loop/*",
-                                                           namespaces=xmns))
-                interesting_set = set(child_list) - lower_loop_child_set
-                child_list = sorted(interesting_set, key=child_list.index)
-
-                # Perform {x} -> str(eval(x)) substitution in all attributes of
-                # all descendants:
-                for child in child_list:
-                    for attr_name, attr_value in child.items():  # attr map
-                        v = self._eval_substitution(attr_value, namespace)
-
-            for child in loop_copy:
-                addnext_to_node.addnext(child)
-                addnext_to_node = child
+            pass
 
     def Include(self, el):
         """
