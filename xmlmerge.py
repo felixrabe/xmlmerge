@@ -323,10 +323,14 @@ class XMLPreprocess(object):
 
         # If not, recurse:
         else:
-            for xml_sub_element in xml_element.xpath("*"):
-                self(xml_sub_element, None, trace_includes, xml_filename)
+            self._recurse_into(xml_element)
 
         return None
+
+    def _recurse_into(self, xml_element, namespace=None):
+        for xml_sub_element in xml_element.xpath("*"):
+            self(xml_sub_element, namespace,
+                 self.trace_includes, self.xml_filename)
 
     _eval_substitution_regex = re.compile(r"\{(.*?)\}")
 
@@ -366,8 +370,11 @@ class XMLPreprocess(object):
     def _xm_block(self, xml_element):
         """
         Create a scope to contain visibility of newly assigned Python
-        variables.
+        variables.  This works the same way that Python itself scopes
+        variables, i.e. by creating a shallow copy of the Python namespace.
+        E.g. assignments to list items will be visible to outside scopes!
         """
+        self._recurse_into(xml_element, self.namespace.copy())
 
     def _xm_comment(self, xml_element):
         """
