@@ -437,11 +437,22 @@ class XMLPreprocess(object):
         exec code in self.namespace
         del self.namespace["self"], self.namespace["xml_element"]
 
-    def _xm_removeattribute(self, xml_element):
+    def _xm_removeattributes(self, xml_element):
         """
-        Remove the attribute (@name) from the element selected by XPath
-        (@select).
+        Remove the attributes (@name) from the (zero or more) elements
+        selected by XPath (@select).
+
+        It is not considered an error if an attribute cannot be found on a
+        selected element.
         """
+        attr_name = xml_element.get("name")
+        select_xpath = xml_element.get("select")
+        for xml_element_selected in xml_element.xpath(select_xpath):
+            # Can't find another way to remove an attribute than by using
+            # 'attrib':
+            attrib = xml_element_selected.attrib
+            if attr_name in attrib:
+                del xml_element_selected.attrib[attr_name]
 
     def _xm_removeelements(self, xml_element):
         """
