@@ -329,8 +329,6 @@ class XMLPreprocess(object):
         else:
             self._recurse_into(xml_element)
 
-        self._namespace_stack.pop()
-        self.namespace = None
         return None
 
     def _recurse_into(self, xml_element, namespace=None):
