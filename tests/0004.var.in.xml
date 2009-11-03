@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+  <xm:Var i="5"/>
+  <CoolElement number="{i+3}">
+    <xm:Var i="20"/>
+  </CoolElement>
+  <CoolElement number="{i * 10 + 2}"/>
+</Test>

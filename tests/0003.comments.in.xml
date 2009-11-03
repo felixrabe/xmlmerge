@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+    <!-- a spurious comment -->
+    <xm:Comment>This one won't be seen in the output</xm:Comment>
+</Test>

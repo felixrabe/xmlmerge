@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test>
+  <CoolElement number="8">
+    <SubElement temporary="0x14"/>
+  </CoolElement>
+  <CoolElement number="52"/>
+</Test>

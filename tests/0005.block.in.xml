@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+  <xm:Var i="5"/>
+  <CoolElement number="{i+3}">
+    <xm:Block>  <xm:Comment>This leads to a local assignment of 'i'.</xm:Comment>
+      <xm:Var i="i + 15"/>
+      <SubElement temporary="{'0x%02X' % i}"/>
+    </xm:Block>
+  </CoolElement>
+  <CoolElement number="{i * 10 + 2}"/>
+</Test>
