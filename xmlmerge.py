@@ -172,7 +172,7 @@ def postprocess_xml(output_xml):
     
     # Make pretty-printing work by removing unnecessary whitespace:
     for el in output_xml.iter():
-        if len(el) and el.text and not el.text.strip():
+        if el.text and not el.text.strip():
             el.text = None
         if el.tail and not el.tail.strip():
             el.tail = None
