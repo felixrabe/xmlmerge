@@ -429,7 +429,8 @@ class XMLPreprocess(object):
         addnext_to_node = xml_element  # for new elements
         for loop_counter_value in loop_counter_list:
             self.namespace[loop_counter_name] = loop_counter_value
-            xml_element_copy = copy.copy(xml_element)
+            # xml_element_copy = copy.copy(xml_element)  # CRASH
+            xml_element_copy = ET.XML(ET.tostring(xml_element))
             self._recurse_into(xml_element_copy)
             for xml_sub_node in xml_element_copy[:]:
                 addnext_to_node.addnext(xml_sub_node)
