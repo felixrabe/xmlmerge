@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+    <xm:Var name="'Felix'"/>
+    <xm:Var context="'World'"/>
+    <message>
+        <xm:Text>Hello, {name}!  Welcome to my {context}! :-)</xm:Text>
+    </message>
+</Test>
