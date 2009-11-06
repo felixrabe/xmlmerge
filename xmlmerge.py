@@ -453,13 +453,13 @@ class XMLPreprocess(object):
     def _xm_removeattributes(self, xml_element):
         """
         Remove the attributes (@name) from the (zero or more) elements
-        selected by XPath (@select).
+        selected by XPath (@from or @select).
 
         It is not considered an error if an attribute cannot be found on a
         selected element.
         """
         attr_name = xml_element.get("name")
-        select_xpath = xml_element.get("select")
+        select_xpath = xml_element.get("from") or xml_element.get("select")
         for xml_element_selected in xml_element.xpath(select_xpath):
             # Can't find another way to remove an attribute than by using
             # 'attrib':
@@ -475,11 +475,11 @@ class XMLPreprocess(object):
     def _xm_setattribute(self, xml_element):
         """
         Assign the value (@value) to the attribute (@name) of the element
-        selected by XPath (@select).
+        selected by XPath (@of or @select).
 
         Example:
             <Object index="0x1234"/>
-            <xm:SetAttribute name="otherattr" value="hallo"/>
+            <xm:SetAttribute of="../Object" name="otherattr" value="hallo"/>
 
         Leads to:
             <Object index="0x1234" otherattr="hello"/>
@@ -496,7 +496,7 @@ class XMLPreprocess(object):
 
     def _xm_var(self, xml_element):
         """
-        Set a variable.
+        Set (zero or more) variables in the active Python namespace.
         """
         ns = self.namespace
         for attr_name, attr_value in xml_element.items():  # attr map
