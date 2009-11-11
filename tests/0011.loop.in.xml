@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+    <xm:Loop mycounter="range(10)">
+        <Outer>
+            <mycounter><xm:Text>{mycounter}</xm:Text></mycounter>
+            <chars><xm:Loop c="'abc'"><xm:Text>{c}</xm:Text></xm:Loop></chars>
+        </Outer>
+    </xm:Loop>
+</Test>
