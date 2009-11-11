@@ -415,6 +415,7 @@ class XMLPreprocess(object):
         Include from the specified file (@file) the elements selected by
         XPath (@select).
         """
+        pass  # TODO
 
     def _xm_loop(self, xml_element):
         """
@@ -480,6 +481,7 @@ class XMLPreprocess(object):
         """
         Remove (zero or more) elements selected by XPath (@select).
         """
+        pass  # TODO
 
     def _xm_setattribute(self, xml_element):
         """
@@ -493,6 +495,7 @@ class XMLPreprocess(object):
         Leads to:
             <Object index="0x1234" otherattr="hello"/>
         """
+        pass  # TODO
 
     def _xm_text(self, xml_element):
         """
