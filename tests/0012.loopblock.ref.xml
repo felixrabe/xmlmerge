@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test>
+  <Loop>
+    <NewIter/>
+    <a>0</a>
+    <Block>
+      <a>0</a>
+      <Loop>
+        <a>x</a>
+        <a>y</a>
+        <a>z</a>
+      </Loop>
+      <a>z</a>
+    </Block>
+    <a>0</a>
+    <NewIter/>
+    <a>1</a>
+    <Block>
+      <a>1</a>
+      <Loop>
+        <a>x</a>
+        <a>y</a>
+        <a>z</a>
+      </Loop>
+      <a>z</a>
+    </Block>
+    <a>1</a>
+    <NewIter/>
+    <a>2</a>
+    <Block>
+      <a>2</a>
+      <Loop>
+        <a>x</a>
+        <a>y</a>
+        <a>z</a>
+      </Loop>
+      <a>z</a>
+    </Block>
+    <a>2</a>
+  </Loop>
+  <a>2</a>
+</Test>

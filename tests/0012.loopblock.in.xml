@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+    <Loop>
+        <xm:Loop a="range(3)">
+            <NewIter/>
+            <a><xm:Text>{a}</xm:Text></a>
+            <xm:Block>
+                <Block>
+                    <a><xm:Text>{a}</xm:Text></a>
+                    <Loop>
+                        <xm:Loop a="'xyz'">
+                            <a><xm:Text>{a}</xm:Text></a>
+                        </xm:Loop>
+                    </Loop>
+                    <a><xm:Text>{a}</xm:Text></a>
+                </Block>
+            </xm:Block>
+            <a><xm:Text>{a}</xm:Text></a>
+        </xm:Loop>
+    </Loop>
+    <a><xm:Text>{a}</xm:Text></a>
+</Test>
