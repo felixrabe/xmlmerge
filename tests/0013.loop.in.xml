@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+    <xm:Loop i="range(2)">
+        <Element i="{i}"/>
+        <xm:Block/>
+    </xm:Loop>
+</Test>
