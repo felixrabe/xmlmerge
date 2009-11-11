@@ -355,7 +355,8 @@ class XMLPreprocess(object):
             self(xml_sub_element, None,
                  self.trace_includes, self.xml_filename)
         if namespace is not None:
-            self.namespace = self._namespace_stack.pop()
+            self._namespace_stack.pop()
+            self.namespace = self._namespace_stack[-1]
 
     _eval_substitution_regex = re.compile(r"\{(.*?)\}")
 
