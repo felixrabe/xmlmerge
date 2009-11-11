@@ -440,8 +440,15 @@ class XMLPreprocess(object):
         for loop_counter_value in loop_counter_list:
             self.namespace[loop_counter_name] = loop_counter_value
             # xml_element_copy = copy.copy(xml_element)  # CRASH
+            tailtext = xml_element.tail
+            xml_element.tail = None  # xml_element regarded as document
             xml_element_copy = ET.XML(ET.tostring(xml_element))
+            xml_element.tail = xml_element_copy.tail = tailtext
             self._recurse_into(xml_element_copy)
+            if xml_element_copy.text is not None:
+                if addnext_to_node.tail is None:
+                    addnext_to_node.tail = u""
+                addnext_to_node.tail += xml_element_copy.text
             for xml_sub_node in xml_element_copy[:]:
                 addnext_to_node.addnext(xml_sub_node)
                 addnext_to_node = xml_sub_node
