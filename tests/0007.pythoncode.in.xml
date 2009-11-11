@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
-    <xm:PythonExec><![CDATA[
+    <xm:PythonCode><![CDATA[
         print self, xml_element
         old_self = self
         self = None
-    ]]></xm:PythonExec>
-    <xm:PythonExec><![CDATA[
+    ]]></xm:PythonCode>
+    <xm:PythonCode><![CDATA[
         assert self is old_self
-    ]]></xm:PythonExec>
+    ]]></xm:PythonCode>
 </Test>

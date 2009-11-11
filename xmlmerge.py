@@ -436,7 +436,7 @@ class XMLPreprocess(object):
                 addnext_to_node.addnext(xml_sub_node)
                 addnext_to_node = xml_sub_node
 
-    def _xm_pythonexec(self, xml_element):
+    def _xm_pythoncode(self, xml_element):
         """
         Execute Python code in the current namespace.
 
