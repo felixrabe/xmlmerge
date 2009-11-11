@@ -94,6 +94,10 @@ class OptionParser(optparse.OptionParser):
         #           -> self.verbose == 2  # no verbosity option given
         # --verbose -> self.verbose == 3  # show debugging messages
 
+    def error(self, *a, **kw):
+        self.print_help()
+        return optparse.OptionParser.error(self, *a, **kw)
+
 
 def parse_command_line(argv):
     """
