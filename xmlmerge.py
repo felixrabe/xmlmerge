@@ -580,7 +580,11 @@ class XMLPreprocess(object):
         """
         Remove (zero or more) elements selected by XPath (@select).
         """
-        pass  # TODO
+        select = xml_element.get("select")
+        assert select is not None
+        elements = xml_element.xpath(select)
+        for el in elements:
+            el.getparent().remove(el)
 
     def _xm_setattribute(self, xml_element):
         """
