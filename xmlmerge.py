@@ -477,7 +477,10 @@ class XMLPreprocess(object):
         xml_incl = ET.parse(xml_incl_filename).getroot()
 
         # Build the initial namespace from remaining attributes:
-        initial_namespace = remaining_attribs
+        initial_namespace = {}
+        ns = self.namespace
+        for attr_name, attr_value in remaining_attribs.items():  # attr map
+            initial_namespace[attr_name] = eval(attr_value, ns)
 
         # Preprocess the to-be-included file:
         proc = XMLPreprocess(initial_namespace=initial_namespace)
@@ -485,9 +488,15 @@ class XMLPreprocess(object):
              xml_filename=xml_incl_filename)
 
         # Select elements to include:
-        elements = []
+        included_elements = []
         if select is not None:
-            elements = xml_incl.xpath(select)
+            included_elements = xml_incl.xpath(select)
+
+        # Include the elements:
+        context_node = xml_element
+        for inc_elem in included_elements:
+            context_node.addnext(inc_elem)
+            context_node = inc_elem
 
         # Import from included namespace:
         imported_namespace = {}
