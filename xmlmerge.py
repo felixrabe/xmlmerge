@@ -392,9 +392,9 @@ class XMLPreprocess(object):
         XPath expression must return exactly one element.  These conditions
         are checked by assertions and will raise an exception if not met.
         """
-        to = xml_element.get("to")
+        to     = xml_element.get("to")
         before = xml_element.get("before")
-        after = xml_element.get("after")
+        after  = xml_element.get("after")
         
         assert sum((to is None, before is None, after is None)) == 2
         select = to or before or after
