@@ -397,11 +397,11 @@ class XMLPreprocess(object):
         assert sum((to is None, before is None, after is None)) == 2
         select = to or before or after
         
-        selected_context_elements = xml_element.xpath(select)
-        assert len(selected_context_elements) == 1
+        selected_context_nodes = xml_element.xpath(select)
+        assert len(selected_context_nodes) == 1
         
-        context_element = selected_context_elements[0]
-        replace_context_element = False
+        context_node = selected_context_nodes[0]
+        replace_context_node = False
         
         if to is not None:
             f = "append"
@@ -409,12 +409,12 @@ class XMLPreprocess(object):
             f = "addprevious"
         if after is not None:
             f = "addnext"
-            replace_context_element = True
+            replace_context_node = True
 
         for xml_sub_element in xml_element:
-            getattr(context_element, f)(xml_sub_element)
-            if replace_context_element:
-                context_element = xml_sub_element
+            getattr(context_node, f)(xml_sub_element)
+            if replace_context_node:
+                context_node = xml_sub_element
 
     def _xm_block(self, xml_element):
         """
@@ -509,7 +509,7 @@ class XMLPreprocess(object):
                                  self.namespace)
 
         # Loop:
-        addnext_to_node = xml_element  # for new elements
+        context_node = xml_element  # for new elements
         for loop_counter_value in loop_counter_list:
             self.namespace[loop_counter_name] = loop_counter_value
             # xml_element_copy = copy.copy(xml_element)  # CRASH
@@ -519,12 +519,12 @@ class XMLPreprocess(object):
             xml_element.tail = xml_element_copy.tail = tailtext
             self._recurse_into(xml_element_copy)
             if xml_element_copy.text is not None:
-                if addnext_to_node.tail is None:
-                    addnext_to_node.tail = u""
-                addnext_to_node.tail += xml_element_copy.text
+                if context_node.tail is None:
+                    context_node.tail = u""
+                context_node.tail += xml_element_copy.text
             for xml_sub_node in xml_element_copy[:]:
-                addnext_to_node.addnext(xml_sub_node)
-                addnext_to_node = xml_sub_node
+                context_node.addnext(xml_sub_node)
+                context_node = xml_sub_node
 
     def _xm_pythoncode(self, xml_element):
         """
