@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test>
+  <add-to>
+    <a/>
+    <b/>
+    <c/>
+  </add-to>
+  <a/>
+  <b/>
+  <c/>
+  <add-before/>
+  <add-after/>
+  <a/>
+  <b/>
+  <c/>
+</Test>

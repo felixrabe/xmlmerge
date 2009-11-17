@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+    <add-to/>
+    <add-before/>
+    <add-after/>
+    <xm:AddElements to="../add-to">
+        <a/> <b/> <c/>
+    </xm:AddElements>
+    <xm:AddElements before="../add-before">
+        <a/> <b/> <c/>
+    </xm:AddElements>
+    <xm:AddElements after="../add-after">
+        <a/> <b/> <c/>
+    </xm:AddElements>
+</Test>
