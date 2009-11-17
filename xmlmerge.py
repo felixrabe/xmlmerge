@@ -387,12 +387,36 @@ class XMLPreprocess(object):
         """
         Add subelements to, before, or after the element selected by XPath
         (@to, @before or @after).
+
+        Exactly one of (@to, @before, @after) must be specified.  And the
+        XPath expression must return exactly one element.  These conditions
+        are checked by assertions and will raise an exception if not met.
         """
         to = xml_element.get("to")
         before = xml_element.get("before")
         after = xml_element.get("after")
+        
         assert sum((to is None, before is None, after is None)) == 2
         select = to or before or after
+        
+        selected_context_elements = xml_element.xpath(select)
+        assert len(selected_context_elements) == 1
+        
+        context_element = selected_context_elements[0]
+        replace_context_element = False
+        
+        if to is not None:
+            f = "append"
+        if before is not None:
+            f = "addprevious"
+        if after is not None:
+            f = "addnext"
+            replace_context_element = True
+
+        for xml_sub_element in xml_element:
+            getattr(context_element, f)(xml_sub_element)
+            if replace_context_element:
+                context_element = xml_sub_element
 
     def _xm_block(self, xml_element):
         """
