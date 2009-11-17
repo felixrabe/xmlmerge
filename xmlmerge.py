@@ -22,7 +22,8 @@
 # along with XML Merge.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# Developed (i.e. tested) using Python 2.6.4 and lxml 2.2.2.
+# Developed (i.e. tested) mainly on Win32 using Python 2.6.4 + lxml 2.2.2,
+# and to a lesser extent also with Python 2.5.4 + lxml 2.1.1.
 
 """
 The purpose of XML Merge is to preprocess any kind of XML file with great
