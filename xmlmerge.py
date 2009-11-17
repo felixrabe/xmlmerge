@@ -24,8 +24,6 @@
 
 # Developed (i.e. tested) using Python 2.6.4 and lxml 2.2.2.
 
-# TODO: What if an attribute should include the '{' or '}' chars?
-
 """
 The purpose of XML Merge is to preprocess any kind of XML file with great
 flexibility.
