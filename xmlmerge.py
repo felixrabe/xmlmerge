@@ -598,7 +598,13 @@ class XMLPreprocess(object):
         Leads to:
             <Object index="0x1234" otherattr="hello"/>
         """
-        pass  # TODO
+        select  = xml_element.get("select", xml_element.get("of"))
+        name    = xml_element.get("name")
+        value   = xml_element.get("value")
+        assert sum((select is None, name is None, value is None)) == 0
+        elements = xml_element.xpath(select)
+        for el in elements:
+            el.set(name, value)
 
     def _xm_text(self, xml_element):
         """
