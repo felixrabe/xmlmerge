@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test>
+  <return function="other_function" value="42"/>
+  <return function="imported_function" value="70"/>
+</Test>

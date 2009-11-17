@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+
+    <xm:PythonCode><![CDATA[
+        
+        def imported_function(a, b, c):
+            return a + b + c
+
+        def other_function(a, b):
+            return imported_function(a, b, 5)
+        
+    ]]></xm:PythonCode>
+
+</Test>
