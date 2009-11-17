@@ -436,9 +436,59 @@ class XMLPreprocess(object):
     def _xm_include(self, xml_element):
         """
         Include from the specified file (@file) the elements selected by
-        XPath (@select).
+        XPath (@select) after preprocessing said file.
+
+        The @file attribute is the only required attribute.
+
+        Items can be imported from the included (and preprocessed) file's
+        Python namespace into the current file's namespace using the
+        @import attribute, which may either be a comma-separated list of
+        identifiers, or '*' to import the complete namespace.
+
+        Remaining attributes will be treated as variable assignments and
+        put in the Python namespace used for processing the included file.
         """
-        pass  # TODO
+        attrib = xml_element.attrib
+        file_   = attrib.pop("file", None)
+        select  = attrib.pop("select", None)
+        import_ = attrib.pop("import", None)
+        assert file_ is not None
+        remaining_attribs = dict(attrib.items())
+
+        # Load the to-be-included file:
+        p = os.path
+
+        xml_input_dirname = p.dirname(self.xml_filename)
+        xml_incl_filename = p.join(xml_input_dirname, file_)
+        xml_incl_filename = p.normpath(xml_incl_filename)
+        # Always use '/' for normalized tracing information:
+        xml_incl_filename = xml_incl_filename.replace("\\", "/")
+
+        xml_incl = ET.parse(xml_incl_filename).getroot()
+
+        # Build the initial namespace from remaining attributes:
+        initial_namespace = remaining_attribs
+
+        # Preprocess the to-be-included file:
+        proc = XMLPreprocess(initial_namespace=initial_namespace)
+        proc(xml_incl, trace_includes=self.trace_includes,
+             xml_filename=xml_incl_filename)
+
+        # Select elements to include:
+        elements = []
+        if select is not None:
+            elements = xml_incl.xpath(select)
+
+        # Import from included namespace:
+        imported_namespace = {}
+        if import_ is not None:
+            import_ = [x.strip() for x in import_.split(",")]
+            if "*" in import_:  # import all
+                imported_namespace = proc.namespace
+            else:
+                ns = proc.namespace
+                imported_namespace = dict((x, ns[x]) for x in import_)
+        self.namespace.update(imported_namespace)
 
     def _xm_loop(self, xml_element):
         """
