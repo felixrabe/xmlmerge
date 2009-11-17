@@ -2,7 +2,7 @@
 <Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
     <xm:Loop mycounter="range(10)">
         <FirstElement i="{mycounter}">
-            <Hex><xm:Text>0x{format(mycounter, '02X')}</xm:Text></Hex>
+            <Hex><xm:Text>0x{"%02X" % mycounter}</xm:Text></Hex>
             <xm:Block>
                 <xm:Var i="mycounter"/>
                 <xm:Loop mycounter="range(5)">
