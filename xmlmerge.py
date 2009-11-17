@@ -433,6 +433,16 @@ class XMLPreprocess(object):
         """
         pass  # that's it
 
+    def _xm_defaultvar(self, xml_element):
+        """
+        Set (zero or more) variables in the active Python namespace, if not
+        already set.
+        """
+        ns = self.namespace
+        for attr_name, attr_value in xml_element.items():  # attr map
+            if not attr_name in ns:
+                ns[attr_name] = eval(attr_value, ns)
+
     def _xm_include(self, xml_element):
         """
         Include from the specified file (@file) the elements selected by
