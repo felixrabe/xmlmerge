@@ -286,9 +286,9 @@ class XMLPreprocess(object):
     >>> output_xml = proc(options, input_xml)  # input_xml may change
     """
 
-    def __init__(self):
+    def __init__(self, initial_namespace={}):
         super(XMLPreprocess, self).__init__()
-        self._namespace_stack = [{}]
+        self._namespace_stack = [initial_namespace]
     
     def __call__(self, xml_element, namespace=None,
                  trace_includes=False, xml_filename=None):
@@ -525,11 +525,15 @@ class XMLPreprocess(object):
 
 ## MAIN FUNCTION
 
-def main(argv):
+def main(argv, **kargs):
     """
-    main(argv) -> int
+    main(argv, **kargs) -> int
     
-    Process input to produce output according to the command line options.
+    Process input to produce output according to the command line options
+    (given in argv).  These keyword arguments (**kargs) are recognized:
+
+    initial_namespace
+      Gets passed on as the initial Python namespace to XMLPreprocess().
 
     After the XML Merge Manual, this is the first piece of the code a new
     developer will read. Keep this code as simple as possible if you change
@@ -553,7 +557,7 @@ def main(argv):
 
     # Input file => preprocessing => output file:
     xml = read_input_file(options.input)
-    proc = XMLPreprocess()
+    proc = XMLPreprocess(**kargs)
     proc(xml, trace_includes=options.trace_includes,
          xml_filename=options.input)
     xml = postprocess_xml(xml)
