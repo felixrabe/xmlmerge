@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test>
+  <Third somevar="124"/>
+  <Fourth/>
+  <First somevar="123"/>
+  <Second/>
+  <First somevar="200"/>
+  <Third somevar="201"/>
+  <First somevar="777"/>
+  <Third somevar="778"/>
+  <First somevar="778"/>
+  <Third somevar="779"/>
+  <Finally>779</Finally>
+</Test>

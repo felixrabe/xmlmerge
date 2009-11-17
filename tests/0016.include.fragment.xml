@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+    <xm:DefaultVar somevar="123"/>
+    <A>
+        <First somevar="{somevar}"/>
+        <Second/>
+    </A>
+    <xm:Var somevar="somevar + 1"/>
+    <B>
+        <Third somevar="{somevar}"/>
+        <Fourth/>
+    </B>
+</Test>
