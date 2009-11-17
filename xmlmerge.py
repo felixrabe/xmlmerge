@@ -544,7 +544,7 @@ class XMLPreprocess(object):
         """
         ns = self.namespace
         for attr_name, attr_value in xml_element.items():  # attr map
-            ns[attr_name] = eval(attr_value, ns, ns)
+            ns[attr_name] = eval(attr_value, ns)
 
 
 ## MAIN FUNCTION
