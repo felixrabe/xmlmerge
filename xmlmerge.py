@@ -532,9 +532,10 @@ class XMLPreprocess(object):
         context_node = xml_element  # for new elements
         for loop_counter_value in loop_counter_list:
             self.namespace[loop_counter_name] = loop_counter_value
-            # xml_element_copy = copy.copy(xml_element)  # CRASH
             tailtext = xml_element.tail
             xml_element.tail = None  # xml_element regarded as document
+            # xml_element_copy = copy.copy(xml_element)  # CRASH
+            # The following line is the workaround for the preceeding one:
             xml_element_copy = ET.XML(ET.tostring(xml_element))
             xml_element.tail = xml_element_copy.tail = tailtext
             self._recurse_into(xml_element_copy)
