@@ -371,7 +371,7 @@ class XMLPreprocess(object):
 
         Multiple Python expressions in one string are supported as well.
         """
-        new_str = []  # faster than always concatenating strings
+        new_str = []  # faster than continuously concatenating strings
         last_index = 0
         for match in self._eval_substitution_regex.finditer(string):
             new_str.append(string[last_index:match.start()])
