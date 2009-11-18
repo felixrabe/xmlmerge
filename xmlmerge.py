@@ -275,6 +275,19 @@ def create_reference_diff_html(html_filename, reference_str, output_str):
     file(html_filename, "w").write(html_str)
 
 
+## XML ERROR REPORTING
+
+def print_xml_error(xml_element, code=None):
+    print >>sys.stderr, "*** XML ERROR ***"
+    tree = xml_element.getroottree()
+    print >>sys.stderr, "File URL:", tree.docinfo.URL
+    xpath = tree.getpath(xml_element)
+    print >>sys.stderr, "Line:", xml_element.sourceline, " XPath:", xpath
+    if code is not None:
+        print >>sys.stderr, "Offending Python code / expression:"
+        print >>sys.stderr, "    %s" % code.replace("\n", "\n    ")
+
+
 ## XML PREPROCESS CLASS
 
 class XMLPreprocess(object):
@@ -319,7 +332,7 @@ class XMLPreprocess(object):
 
         # Evaluate Python expressions in the attributes of xml_element:
         for attr_name, attr_value in xml_element.items():  # attr map
-            v = self._eval_substitution(attr_value)
+            v = self._eval_substitution(attr_value, xml_element)
             xml_element.set(attr_name, v)
 
         # If xml_element has xmns["xm"] as its namespace, proceed with the
@@ -359,7 +372,7 @@ class XMLPreprocess(object):
 
     _eval_substitution_regex = re.compile(r"\{(.*?)\}")
 
-    def _eval_substitution(self, string):
+    def _eval_substitution(self, string, xml_element=None):
         """
         Evaluate Python expressions within strings.
 
@@ -376,7 +389,13 @@ class XMLPreprocess(object):
         for match in self._eval_substitution_regex.finditer(string):
             new_str.append(string[last_index:match.start()])
             expression = match.group(1)
-            result = str(eval(expression, self.namespace))
+            try:
+                result = str(eval(expression, self.namespace))
+            except:
+                if xml_element is not None:
+                    print_xml_error(xml_element, code=expression)
+                    print >>sys.stderr
+                raise
             new_str.append(result)
             last_index = match.end()
         new_str.append(string[last_index:])
@@ -442,7 +461,12 @@ class XMLPreprocess(object):
         ns = self.namespace
         for attr_name, attr_value in xml_element.items():  # attr map
             if not attr_name in ns:
-                ns[attr_name] = eval(attr_value, ns)
+                try:
+                    ns[attr_name] = eval(attr_value, ns)
+                except:
+                    print_xml_error(xml_element, code=attr_value)
+                    print >>sys.stderr
+                    raise
 
     def _xm_include(self, xml_element):
         """
@@ -481,7 +505,12 @@ class XMLPreprocess(object):
         initial_namespace = {}
         ns = self.namespace
         for attr_name, attr_value in remaining_attribs.items():  # attr map
-            initial_namespace[attr_name] = eval(attr_value, ns)
+            try:
+                initial_namespace[attr_name] = eval(attr_value, ns)
+            except:
+                print_xml_error(xml_element, code=attr_value)
+                print >>sys.stderr
+                raise
 
         # Preprocess the to-be-included file:
         proc = XMLPreprocess(initial_namespace=initial_namespace)
@@ -525,8 +554,13 @@ class XMLPreprocess(object):
         """
         # Get the loop counter name and list:
         loop_counter_name = xml_element.keys()[0]
-        loop_counter_list = eval(xml_element.get(loop_counter_name),
-                                 self.namespace)
+        loop_counter_expr = xml_element.get(loop_counter_name)
+        try:
+            loop_counter_list = eval(loop_counter_expr, self.namespace)
+        except:
+            print_xml_error(xml_element, code=loop_counter_expr)
+            print >>sys.stderr
+            raise
 
         # Loop:
         context_node = xml_element  # for new elements
@@ -558,7 +592,12 @@ class XMLPreprocess(object):
         code = textwrap.dedent(xml_element.text).strip()
         self.namespace["self"] = self
         self.namespace["xml_element"] = xml_element
-        exec code in self.namespace
+        try:
+            exec code in self.namespace
+        except:
+            print_xml_error(xml_element, code=code)
+            print >>sys.stderr
+            raise
         del self.namespace["self"], self.namespace["xml_element"]
 
     def _xm_removeattributes(self, xml_element):
@@ -614,7 +653,8 @@ class XMLPreprocess(object):
         """
         text = xml_element.text
         if text is None: return
-        tail = self._eval_substitution(text) + (xml_element.tail or "")
+        tail = self._eval_substitution(text, xml_element)
+        tail += xml_element.tail or ""
         xml_element.tail = tail
 
     def _xm_var(self, xml_element):
@@ -623,7 +663,12 @@ class XMLPreprocess(object):
         """
         ns = self.namespace
         for attr_name, attr_value in xml_element.items():  # attr map
-            ns[attr_name] = eval(attr_value, ns)
+            try:
+                ns[attr_name] = eval(attr_value, ns)
+            except:
+                print_xml_error(xml_element, code=attr_value)
+                print >>sys.stderr
+                raise
 
 
 ## MAIN FUNCTION
