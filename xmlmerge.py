@@ -501,12 +501,13 @@ class XMLPreprocess(object):
 
         xml_incl = ET.parse(xml_incl_filename).getroot()
 
-        # Build the initial namespace from remaining attributes:
-        initial_namespace = {}
-        ns = self.namespace
+        # Build the initial namespace from a copy of the current namespace
+        # plus the remaining attributes of the <xm:Include/> element:
+        current_ns = self.namespace
+        initial_namespace = current_ns.copy()
         for attr_name, attr_value in remaining_attribs.items():  # attr map
             try:
-                initial_namespace[attr_name] = eval(attr_value, ns)
+                initial_namespace[attr_name] = eval(attr_value, current_ns)
             except:
                 print_xml_error(xml_element, code=attr_value)
                 print >>sys.stderr
