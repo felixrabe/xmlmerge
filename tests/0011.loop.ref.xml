@@ -12,32 +12,4 @@
     <mycounter>2</mycounter>
     <chars>abc</chars>
   </Outer>
-  <Outer>
-    <mycounter>3</mycounter>
-    <chars>abc</chars>
-  </Outer>
-  <Outer>
-    <mycounter>4</mycounter>
-    <chars>abc</chars>
-  </Outer>
-  <Outer>
-    <mycounter>5</mycounter>
-    <chars>abc</chars>
-  </Outer>
-  <Outer>
-    <mycounter>6</mycounter>
-    <chars>abc</chars>
-  </Outer>
-  <Outer>
-    <mycounter>7</mycounter>
-    <chars>abc</chars>
-  </Outer>
-  <Outer>
-    <mycounter>8</mycounter>
-    <chars>abc</chars>
-  </Outer>
-  <Outer>
-    <mycounter>9</mycounter>
-    <chars>abc</chars>
-  </Outer>
 </Test>
