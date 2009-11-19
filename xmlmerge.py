@@ -572,8 +572,10 @@ class XMLPreprocess(object):
             # xml_element_copy = copy.copy(xml_element)  # CRASH
             # The following line is the workaround for the preceeding one:
             xml_element_copy = ET.XML(ET.tostring(xml_element))
+            xml_element.addnext(xml_element_copy)  # temporarily
             xml_element.tail = xml_element_copy.tail = tailtext
             self._recurse_into(xml_element_copy)
+            xml_element_copy.getparent().remove(xml_element_copy)
             if xml_element_copy.text is not None:
                 if context_node.tail is None:
                     context_node.tail = u""
