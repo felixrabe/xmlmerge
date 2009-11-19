@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+    <xm:Loop mycounter="range(20)">
+        <xm:Var mycounter="'0x%02X' % mycounter"/>
+        <value mycounter="{mycounter}"/>
+    </xm:Loop>
+</Test>

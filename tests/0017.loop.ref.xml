@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test>
+  <value mycounter="0x00"/>
+  <value mycounter="0x01"/>
+  <value mycounter="0x02"/>
+  <value mycounter="0x03"/>
+  <value mycounter="0x04"/>
+  <value mycounter="0x05"/>
+  <value mycounter="0x06"/>
+  <value mycounter="0x07"/>
+  <value mycounter="0x08"/>
+  <value mycounter="0x09"/>
+  <value mycounter="0x0A"/>
+  <value mycounter="0x0B"/>
+  <value mycounter="0x0C"/>
+  <value mycounter="0x0D"/>
+  <value mycounter="0x0E"/>
+  <value mycounter="0x0F"/>
+  <value mycounter="0x10"/>
+  <value mycounter="0x11"/>
+  <value mycounter="0x12"/>
+  <value mycounter="0x13"/>
+</Test>
