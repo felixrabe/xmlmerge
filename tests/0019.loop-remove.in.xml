@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+  <Item index="0x6301">
+    <SubItem subIndex="0x02"/>
+    <SubItem subIndex="0x04"/>
+    <SubItem subIndex="0x06"/>
+    <SubItem subIndex="0x08"/>
+    <SubItem subIndex="0x0A"/>
+    <SubItem subIndex="0x0C"/>
+    <SubItem subIndex="0x0E"/>
+    <SubItem subIndex="0x10"/>
+    <SubItem subIndex="0x12"/>
+    <SubItem subIndex="0x14"/>
+    <SubItem subIndex="0x16"/>
+    <SubItem subIndex="0x18"/>
+    <SubItem subIndex="0x1A"/>
+    <SubItem subIndex="0x1C"/>
+    <SubItem subIndex="0x1E"/>
+  </Item>
+  <Item index="0x6303">
+    <SubItem subIndex="0x02"/>
+    <SubItem subIndex="0x04"/>
+    <SubItem subIndex="0x06"/>
+    <SubItem subIndex="0x08"/>
+    <SubItem subIndex="0x0A"/>
+    <SubItem subIndex="0x0C"/>
+    <SubItem subIndex="0x0E"/>
+    <SubItem subIndex="0x10"/>
+    <SubItem subIndex="0x12"/>
+    <SubItem subIndex="0x14"/>
+    <SubItem subIndex="0x16"/>
+    <SubItem subIndex="0x18"/>
+    <SubItem subIndex="0x1A"/>
+    <SubItem subIndex="0x1C"/>
+    <SubItem subIndex="0x1E"/>
+  </Item>
+  <Item index="0x6305">
+    <SubItem subIndex="0x02"/>
+    <SubItem subIndex="0x04"/>
+    <SubItem subIndex="0x06"/>
+    <SubItem subIndex="0x08"/>
+    <SubItem subIndex="0x0A"/>
+    <SubItem subIndex="0x0C"/>
+    <SubItem subIndex="0x0E"/>
+    <SubItem subIndex="0x10"/>
+    <SubItem subIndex="0x12"/>
+    <SubItem subIndex="0x14"/>
+    <SubItem subIndex="0x16"/>
+    <SubItem subIndex="0x18"/>
+    <SubItem subIndex="0x1A"/>
+    <SubItem subIndex="0x1C"/>
+    <SubItem subIndex="0x1E"/>
+  </Item>
+  <xm:Loop i="range(0x10, 0x17+1)">
+    <xm:Var i="'0x%02X' % (i)"/>
+    <xm:RemoveElements select="//Item[@index='0x6303']/SubItem[@subIndex='{i}']"/>
+    <Removed i="{i}"/>
+  </xm:Loop>
+</Test>

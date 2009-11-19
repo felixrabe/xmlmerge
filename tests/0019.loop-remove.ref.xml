@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Test>
+  <Item index="0x6301">
+    <SubItem subIndex="0x02"/>
+    <SubItem subIndex="0x04"/>
+    <SubItem subIndex="0x06"/>
+    <SubItem subIndex="0x08"/>
+    <SubItem subIndex="0x0A"/>
+    <SubItem subIndex="0x0C"/>
+    <SubItem subIndex="0x0E"/>
+    <SubItem subIndex="0x10"/>
+    <SubItem subIndex="0x12"/>
+    <SubItem subIndex="0x14"/>
+    <SubItem subIndex="0x16"/>
+    <SubItem subIndex="0x18"/>
+    <SubItem subIndex="0x1A"/>
+    <SubItem subIndex="0x1C"/>
+    <SubItem subIndex="0x1E"/>
+  </Item>
+  <Item index="0x6303">
+    <SubItem subIndex="0x02"/>
+    <SubItem subIndex="0x04"/>
+    <SubItem subIndex="0x06"/>
+    <SubItem subIndex="0x08"/>
+    <SubItem subIndex="0x0A"/>
+    <SubItem subIndex="0x0C"/>
+    <SubItem subIndex="0x0E"/>
+    <SubItem subIndex="0x18"/>
+    <SubItem subIndex="0x1A"/>
+    <SubItem subIndex="0x1C"/>
+    <SubItem subIndex="0x1E"/>
+  </Item>
+  <Item index="0x6305">
+    <SubItem subIndex="0x02"/>
+    <SubItem subIndex="0x04"/>
+    <SubItem subIndex="0x06"/>
+    <SubItem subIndex="0x08"/>
+    <SubItem subIndex="0x0A"/>
+    <SubItem subIndex="0x0C"/>
+    <SubItem subIndex="0x0E"/>
+    <SubItem subIndex="0x10"/>
+    <SubItem subIndex="0x12"/>
+    <SubItem subIndex="0x14"/>
+    <SubItem subIndex="0x16"/>
+    <SubItem subIndex="0x18"/>
+    <SubItem subIndex="0x1A"/>
+    <SubItem subIndex="0x1C"/>
+    <SubItem subIndex="0x1E"/>
+  </Item>
+  <Removed i="0x10"/>
+  <Removed i="0x11"/>
+  <Removed i="0x12"/>
+  <Removed i="0x13"/>
+  <Removed i="0x14"/>
+  <Removed i="0x15"/>
+  <Removed i="0x16"/>
+  <Removed i="0x17"/>
+</Test>
