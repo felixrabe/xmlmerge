@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
-    <xm:Include file="0016.import.fragment.xml" import="other_function"/>
+    <xm:Include file="0015.import.fragment.xml" import="other_function"/>
     <return function="other_function" value="{other_function(15, 22)}"/>
-    <xm:Include file="0016.import.fragment.xml" import="*"/>
+    <xm:Include file="0015.import.fragment.xml" import="*"/>
     <return function="imported_function" value="{imported_function(15, 22, 33)}"/>
 </Test>

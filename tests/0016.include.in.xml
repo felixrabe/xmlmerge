@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
-    <xm:Include file="0017.include.fragment.xml" select="/Test/B/*"/>
-    <xm:Include file="0017.include.fragment.xml" select="/Test/A/*"/>
-    <xm:Include file="0017.include.fragment.xml" select="//*[@somevar]" somevar="200"/>
+    <xm:Include file="0016.include.fragment.xml" select="/Test/B/*"/>
+    <xm:Include file="0016.include.fragment.xml" select="/Test/A/*"/>
+    <xm:Include file="0016.include.fragment.xml" select="//*[@somevar]" somevar="200"/>
     <xm:DefaultVar somevar="777"/>
-    <xm:Include file="0017.include.fragment.xml" select="//*[@somevar]" somevar="somevar" import="somevar"/>
+    <xm:Include file="0016.include.fragment.xml" select="//*[@somevar]" somevar="somevar" import="somevar"/>
     <xm:DefaultVar somevar="800"/>
-    <xm:Include file="0017.include.fragment.xml" select="//*[@somevar]" somevar="somevar" import="somevar"/>
+    <xm:Include file="0016.include.fragment.xml" select="//*[@somevar]" somevar="somevar" import="somevar"/>
     <Finally><xm:Text>{somevar}</xm:Text></Finally>
 </Test>
