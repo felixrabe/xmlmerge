@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# XML Merge 2.0.1
+# XML Merge 2.0.1.git
 
 # Copyright 2008,2009  Felix Rabe  <public@felixrabe.net>
 
@@ -37,7 +37,7 @@ command line, but can equally well be used from within another Python
 program or module.
 """
 
-__version_info__ = (2, 0, 1)
+__version_info__ = (2, 0, 1, "git")
 __version__ = ".".join(str(n) for n in __version_info__[:2])
 
 ## IMPORTS AND CONSTANTS
