@@ -275,7 +275,7 @@ def create_reference_diff_html(html_filename, reference_str, output_str):
     file(html_filename, "w").write(html_str)
 
 
-## XML ERROR REPORTING
+## VARIOUS FUNCTIONS
 
 def print_xml_error(xml_element, code=None):
     print >>sys.stderr, "*** XML ERROR ***"
@@ -286,6 +286,39 @@ def print_xml_error(xml_element, code=None):
     if code is not None:
         print >>sys.stderr, "Offending Python code / expression:"
         print >>sys.stderr, "    %s" % code.replace("\n", "\n    ")
+
+
+_brace_substitution_regex = re.compile(r"\{(.*?)\}")
+
+def brace_substitution(string, xml_element=None, namespace=None):
+    """
+    Evaluate Python expressions within strings.
+
+    Internal method to perform substitution of Python expressions
+    within attribute values, {x} -> str(eval(x)).  Example:
+
+    >>> self._eval_substitution("3 + 5 = {3 + 5} in Python")
+    '3 + 5 = 8 in Python'
+
+    Multiple Python expressions in one string are supported as well.
+    """
+    if namespace is None: namespace = {}
+    new_str = []  # faster than continuously concatenating strings
+    last_index = 0
+    for match in _brace_substitution_regex.finditer(string):
+        new_str.append(string[last_index:match.start()])
+        expression = match.group(1)
+        try:
+            result = str(eval(expression, namespace))
+        except:
+            if xml_element is not None:
+                print_xml_error(xml_element, code=expression)
+                print >>sys.stderr
+            raise
+        new_str.append(result)
+        last_index = match.end()
+    new_str.append(string[last_index:])
+    return "".join(new_str)
 
 
 ## XML PREPROCESS CLASS
@@ -332,7 +365,7 @@ class XMLPreprocess(object):
 
         # Evaluate Python expressions in the attributes of xml_element:
         for attr_name, attr_value in xml_element.items():  # attr map
-            v = self._eval_substitution(attr_value, xml_element)
+            v = brace_substitution(attr_value, xml_element, self.namespace)
             xml_element.set(attr_name, v)
 
         # If xml_element has xmns["xm"] as its namespace, proceed with the
@@ -369,37 +402,6 @@ class XMLPreprocess(object):
         if namespace is not None:
             self._namespace_stack.pop()
             self.namespace = self._namespace_stack[-1]
-
-    _eval_substitution_regex = re.compile(r"\{(.*?)\}")
-
-    def _eval_substitution(self, string, xml_element=None):
-        """
-        Evaluate Python expressions within strings.
-
-        Internal method to perform substitution of Python expressions
-        within attribute values, {x} -> str(eval(x)).  Example:
-
-        >>> self._eval_substitution("3 + 5 = {3 + 5} in Python")
-        '3 + 5 = 8 in Python'
-
-        Multiple Python expressions in one string are supported as well.
-        """
-        new_str = []  # faster than continuously concatenating strings
-        last_index = 0
-        for match in self._eval_substitution_regex.finditer(string):
-            new_str.append(string[last_index:match.start()])
-            expression = match.group(1)
-            try:
-                result = str(eval(expression, self.namespace))
-            except:
-                if xml_element is not None:
-                    print_xml_error(xml_element, code=expression)
-                    print >>sys.stderr
-                raise
-            new_str.append(result)
-            last_index = match.end()
-        new_str.append(string[last_index:])
-        return "".join(new_str)
 
     def _xm_addelements(self, xml_element):
         """
@@ -656,7 +658,7 @@ class XMLPreprocess(object):
         """
         text = xml_element.text
         if text is None: return
-        tail = self._eval_substitution(text, xml_element)
+        tail = brace_substitution(text, xml_element, self.namespace)
         tail += xml_element.tail or ""
         xml_element.tail = tail
 
