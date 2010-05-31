@@ -5,6 +5,9 @@
 
 # Copyright 2008,2009  Felix Rabe  <public@felixrabe.net>
 
+# The main() function (search "def main") is a good starting point for
+# understanding the code.
+
 
 # This file is part of XML Merge.
 
@@ -105,8 +108,8 @@ def parse_command_line(argv):
     Parse argv and return an optparse.Values object containing the options.
 
     This function performs all the necessary checks and conversions to make
-    sure all necessary options are given, and that all options are
-    available in a normalized format.
+    sure all necessary options are given.  The resulting options are provided in
+    a normalized format.
 
     It also tries to create the containing directory for the output file if
     it does not exist already.
@@ -294,13 +297,14 @@ def brace_substitution(string, xml_element=None, namespace=None):
     """
     Evaluate Python expressions within strings.
 
-    Internal method to perform substitution of Python expressions
-    within attribute values, {x} -> str(eval(x)).  Example:
+    This internal method substitutes Python expressions embedded in strings for
+    their evaluated (string) values, like {x} -> str(eval(x)).  Example:
 
     >>> self._eval_substitution("3 + 5 = {3 + 5} in Python")
     '3 + 5 = 8 in Python'
 
-    Multiple Python expressions in one string are supported as well.
+    Multiple Python expressions in one string are supported as well.  Nested
+    Python expressions are not supported.
     """
     if namespace is None: namespace = {}
     new_str = []  # faster than continuously concatenating strings
@@ -682,15 +686,16 @@ def main(argv, **kargs):
     """
     main(argv, **kargs) -> int
     
-    Process input to produce output according to the command line options
-    (given in argv).  These keyword arguments (**kargs) are recognized:
+    Process the input file to produce an output file according to the command
+    line options, given in argv.  These keyword arguments (**kargs) are
+    recognized:
 
     initial_namespace
       Gets passed on as the initial Python namespace to XMLPreprocess().
 
-    After the XML Merge Manual, this is the first piece of the code a new
-    developer will read. Keep this code as simple as possible if you change
-    it in any way.
+    After the XML Merge Manual, the code of this function is the first part of
+    XML Merge any new developer should read.  So keep this code as simple as
+    possible if you change it in any way.
 
     These are all possible exit status codes returned or raised (using
     SystemExit) by main or the functions it calls:
