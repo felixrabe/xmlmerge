@@ -212,15 +212,16 @@ def read_xml_schema_file(xml_schema_filename):
     xml_schema = ET.XMLSchema(xml_schema_xmltree)
     return xml_schema
 
-def match_against_schema(options, output_xml, xml_schema):
+def match_against_schema(options, output_xml):
     """
-    match_against_schema(options, output_xml, xml_schema) -> bool
+    match_against_schema(options, output_xml) -> bool
     
-    Validate output against XML Schema.
+    Validate output against XML Schema (file options.xml_schema).
 
     The result is True if the output XML Element (tree) matches the XML
     Schema, otherwise the result is False.
     """
+    xml_schema = read_xml_schema_file(options.xml_schema)
     is_valid = xml_schema.validate(output_xml.getroottree())
     if options.verbose >= 2:
         if is_valid:
@@ -724,8 +725,7 @@ def main(argv, **kargs):
     # If -s: Compare output to XML Schema file:
     matches_schema = True  # False means: match requested and negative
     if options.xml_schema is not None:
-        xml_schema = read_xml_schema_file(options.xml_schema)
-        matches_schema = match_against_schema(options, xml, xml_schema)
+        matches_schema = match_against_schema(options, xml)
     
     # If -r: Compare output to reference:
     matches_reference = True  # False means: match requested and negative
