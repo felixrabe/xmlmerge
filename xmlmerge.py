@@ -40,7 +40,7 @@ command line, but can equally well be used from within another Python
 program or module.
 """
 
-__version_info__ = (2, 0, 1, "git")
+__version_info__ = (2, 0, 99, "git")
 __version__ = ".".join(str(n) for n in __version_info__[:2])
 
 ## IMPORTS AND CONSTANTS
