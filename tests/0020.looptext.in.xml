@@ -1,4 +1,4 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Test xmlns:xm="urn:felixrabe:xmlns:xmlmerge:preprocess">
+<Test xmlns:xm="tag:felixrabe.net,2011:xmlns:xmlmerge:preprocess">
   <chars><xm:Loop c="'abc'"><xm:Text>{c}</xm:Text></xm:Loop></chars>
 </Test>

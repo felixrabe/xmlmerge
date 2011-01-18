@@ -56,8 +56,8 @@ import textwrap
 import lxml.etree as ET
 
 # Namespace mapping (can be directly used for lxml nsmap arguments):
-xmns = {"xm":   "urn:felixrabe:xmlns:xmlmerge:preprocess",
-        "xmt":  "urn:felixrabe:xmlns:xmlmerge:inctrace"}
+xmns = {"xm":   "tag:felixrabe.net,2011:xmlns:xmlmerge:preprocess",
+        "xmt":  "tag:felixrabe.net,2011:xmlns:xmlmerge:inctrace"}
 
 
 ## COMMAND LINE OPTION PARSING
