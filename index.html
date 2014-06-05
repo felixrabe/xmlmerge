@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>XML Merge</title>
+<style type="text/css">
+/* Chapter numbers */
+body { counter-reset: chapter; }
+h2:before {
+    content: counter(chapter) " ";
+    counter-increment: chapter;
+}
+h2 {
+    counter-reset: section;
+}
+h3:before {
+    content: counter(chapter) "." counter(section) " ";
+    counter-increment: section;
+}
+
+/* Example tables */
+table.example {
+    border-collapse: collapse;
+}
+table.example tr.header {
+    border-bottom: 2px solid black;
+}
+table.example td {
+    border: 1px solid black;
+    font-family: monospace;
+    font-size: 10pt;
+    padding: 4px;
+    vertical-align: top;
+    white-space: pre;
+    width: 380px;
+}
+table.example tr.header td {
+    font-family: inherit;
+    font-size: inherit;
+}
+table.nowidth td {
+    width: inherit;
+}
+
+.warning {
+    color: red;
+    font-style: italic;
+}
+</style>
+</head>
+<body>
+
+<h1>XML Merge 2.0 Manual</h1>
+
+
+<h2>Introduction to XML Merge</h2>
+
+<p>XML Merge is an XML file preprocessor.  XML Merge allows to recursively include XML files (called &quot;XML fragments&quot; in this document) and to modify XML elements and attributes.  The result of the preprocessing is a single XML output file.</p>
+
+<p><img src="XML Merge Processing Diagram 372px.png" width="372" height="450" alt="XML Merge Processing Diagram"/></p>
+
+<p>XML Merge is a Python module.  It is normally invoked as a program from the command line, but can equally well be used from within another Python program or module.  Both use cases are described in this manual in great depth.</p>
+
+<h3>Run-time Requirements (Dependencies and Compatibilities) of XML Merge</h3>
+
+<p>XML Merge was developed and tested using Python 2.6.4 and lxml 2.2.2.  It seems to work with Python 2.5 and lxml 2.1 as well.  For future development, only compatibility with Python 2.5 (and later also 3.1) will be aspired.</p>
+
+<p>You can download Python from <a href="http://www.python.org/">http://www.python.org/</a>, and lxml from <a href="http://codespeak.net/lxml/">http://codespeak.net/lxml/</a>.</p>
+
+<h3>The Code of XML Merge</h3>
+
+<p>XML Merge is hosted at <a href="http://repo.or.cz/w/xmlmerge.git">http://repo.or.cz/w/xmlmerge.git</a>.  That website shows you the version control history of the source code.  To get to the XML Merge source code itself, use the &quot;tree&quot; or &quot;snapshot&quot; links.  Development has reached a slow pace at which each revision in the repository is stable and tested, and it is safe to use the most recent revision.</p>
+
+<p>XML Merge is free software: you can redistribute it and/or modify it under the terms of the <b>GNU Lesser General Public License</b> as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+
+<p>XML Merge is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License (COPYING.LGPL3 and COPYING.GPL3) for more details.</p>
+
+<p>The source code of XML Merge is one single file of less than 1000 lines: xmlmerge.py.  It is well-documented, conforms to <a href="http://www.python.org/dev/peps/pep-0008/">http://www.python.org/dev/peps/pep-0008/</a> (Python style guide), and is readable by any Python programmer who knows his way around <a href="http://docs.python.org/">http://docs.python.org/</a>, especially &quot;Library Reference&quot; and &quot;Language Reference&quot;.</p>
+
+<p>It starts out with the module comments and doc string, followed by <b>imports and constants</b>.  Next comes the <b>command line parsing</b> class and function.  &quot;<b>XML processing and comparison</b>&quot; functions, and the <b>XML Preprocess class</b>, are called by the <b>main function</b> at the very bottom of the file.  The main function is run if xmlmerge.py is used from the command line (as opposed to xmlmerge being used as a Python module).</p>
+
+<h3>Using XML Merge as a Python Module</h3>
+
+<p>You can also &quot;import xmlmerge&quot; and use its individual parts in your own Python application.  If you read and understand the code of the short main function, you will know what parts will be of interest to you and how to use them.</p>
+
+
+<h2>A Complete Example</h2>
+
+<p>Run: <tt>xmlmerge.py -i document.xml -o document.out.xml</tt></p>
+
+<table class="example">
+<tr class="header">
+<td><b>Input File</b> (document.xml)</td>
+</tr>
+<tr>
+
+<td>&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;Document xmlns:xm=&quot;urn:felixrabe:xmlns:xmlmerge:preprocess&quot;&gt;
+
+&lt;xm:Var greeting=&quot;'Hello'&quot; addressee=&quot;'World'&quot;/&gt;
+
+&lt;Paragraph&gt;&lt;xm:Text&gt;{greeting} {addressee}&lt;/xm:Text&gt;&lt;/Paragraph&gt;
+
+&lt;/Document&gt;</td>
+
+</tr>
+</table>
+
+<p></p>
+
+<table class="example">
+<tr class="header">
+<td><b>Output File</b> (document.out.xml)</td>
+</tr>
+<tr>
+
+<td>&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;Document&gt;
+  &lt;Paragraph&gt;Hello World&lt;/Paragraph&gt;
+&lt;/Document&gt;</td>
+
+</tr>
+</table>
+
+
+
+
+<h2>XML Preprocessing</h2>
+
+<p>The element names of the &lt;xm:*/&gt; tags are not case sensitive, though of course start and end tags have to match in case, according to the XML standard.  The XML namespace used for these tags is xmlns:xm=&quot;urn:felixrabe:xmlns:xmlmerge:preprocess&quot;.</p>
+
+<p>Please note that whitespace has been simplified in the output of the examples below, and may not match actual XML Merge output.</p>
+
+<h3>Python Expressions and Variables in XML Input and Fragment Files</h3>
+
+<p>Strings enclosed in &quot;{&quot; and &quot;}&quot; (curly braces) are evaluated as Python expressions within attributes and &lt;xm:Text/&gt;.  Python variables are set by &lt;xm:Var/&gt; and &lt;xm:PythonCode/&gt; for the remainder of the current document or block, and by &lt;xm:Include/&gt; for the included document.  The scope of these variables is limited by &lt;xm:Block/&gt; and by the boundaries of included documents.</p>
+
+<h3>XPath Expressions</h3>
+
+<p>Attributes of the XML Merge namespace (i.e. of the &lt;xm:*/&gt; elements) called &quot;select, to, before, after, from&quot; expect XPath expressions.  These find elements in the whole document (i.e. before and after, above and below the &lt;xm:*/&gt; element itself), using the containing &lt;xm:*/&gt; element as the context node.</p>
+
+<h3>&lt;xm:AddElements/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;dst&gt;
+    &lt;other/&gt;
+&lt;/dst&gt;
+
+&lt;xm:AddElements to=&quot;<i>XPath/to/dst</i>&quot;&gt;
+    &lt;a/&gt; &lt;b/&gt; &lt;c/&gt;
+&lt;/xm:AddElements&gt;</td>
+
+<td>&lt;dst&gt;
+    &lt;other/&gt;
+    &lt;a/&gt; &lt;b/&gt; &lt;c/&gt;
+&lt;/dst&gt;</td>
+
+</tr>
+<tr>
+
+<td>&lt;other/&gt;
+&lt;dst/&gt;
+
+&lt;xm:AddElements before=&quot;<i>XPath/to/dst</i>&quot;&gt;
+    &lt;a/&gt; &lt;b/&gt; &lt;c/&gt;
+&lt;/xm:AddElements&gt;</td>
+
+<td>&lt;other/&gt;
+&lt;a/&gt; &lt;b/&gt; &lt;c/&gt;
+&lt;dst/&gt;</td>
+
+</tr>
+<tr>
+
+<td>&lt;dst/&gt;
+&lt;other/&gt;
+
+&lt;xm:AddElements after=&quot;<i>XPath/to/dst</i>&quot;&gt;
+    &lt;a/&gt; &lt;b/&gt; &lt;c/&gt;
+&lt;/xm:AddElements&gt;</td>
+
+<td>&lt;dst/&gt;
+&lt;a/&gt; &lt;b/&gt; &lt;c/&gt;
+&lt;other/&gt;</td>
+
+</tr>
+</table>
+
+<p>Add elements &quot;a&quot;, &quot;b&quot;, and &quot;c&quot; to, before, or after the element &quot;dst&quot;.</p>
+
+<h3>&lt;xm:Block/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;xm:Var x=&quot;1&quot;/&gt;
+&lt;xm:Block&gt;
+    &lt;xm:Var x=&quot;2&quot;/&gt;
+    &lt;first x=&quot;{x}&quot;/&gt;
+&lt;/xm:Block&gt;
+&lt;second x=&quot;{x}&quot;/&gt;</td>
+
+<td>&lt;first x=&quot;2&quot;/&gt;
+&lt;second x=&quot;1&quot;/&gt;</td>
+
+</tr>
+</table>
+
+<p>Define a scope for variables. Variable values that get set inside the block are only visible inside the block.</p>
+
+<h3>&lt;xm:Comment/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;a/&gt;
+&lt;!-- not removed --&gt;
+&lt;xm:Comment&gt;
+    This gets removed by XML Merge.
+&lt;/xm:Comment&gt;
+&lt;b/&gt;</td>
+
+<td>&lt;a/&gt;
+&lt;!-- not removed --&gt;
+&lt;b/&gt;</td>
+
+</tr>
+</table>
+
+<p>XML Merge provides its own comment element which does not appear in the output.  In contrast, standard XML comments are preserved and do appear in the output.</p>
+
+<h3>&lt;xm:DefaultVar/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;xm:Var variable_1=&quot;'Hello'&quot; variable_2=&quot;'World'&quot;/&gt;
+&lt;xm:Block&gt;
+    &lt;xm:DefaultVar variable_1=&quot;'Hi'&quot;/&gt;
+    &lt;xm:Var variable_2=&quot;'Buddy'&quot;/&gt;
+    &lt;Message text=&quot;{variable_1} {variable_2}&quot;/&gt;
+&lt;/xm:Block&gt;</td>
+
+<td>&lt;Message text=&quot;Hello Buddy&quot;/&gt;</td>
+
+</tr>
+</table>
+
+<p>Works like &lt;xm:Var/&gt; (see there), but only sets the variables (and evaluates the Python expressions) if those names to not already exist in the current Python namespace.  In the example, 'variable_1' is only set once and will not receive the new value 'Hi' because, at that point, it already has a value.</p>
+
+<p>&lt;xm:DefaultVar/&gt; is especially valuable in combination with &lt;xm:Include/&gt; (see there), where it can be used to define default values inside the included file which then can be optionally overwritten by attributes given to the &lt;xm:Include/&gt; tag itself.</p>
+
+<h3>&lt;xm:Include/&gt;</h3>
+
+<p class="warning">WARNING: It is not safe to include untrusted XML fragments as those can cause execution of arbitrary Python code.</p>
+
+<p>The given file path (attribute &quot;file&quot;) is relative to the path of the document containing the &lt;xm:Include/&gt; element.</p>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;xm:Include
+    file=&quot;<i>../path/to/file.xml</i>&quot;
+    select=&quot;<i>XPath/to/src</i>&quot;/&gt;</td>
+
+<td><i>[ Specific 'src' elements (see 'select') of
+  the specified document (see 'file') ]</i></td>
+
+</tr>
+</table>
+
+<p>In the first form (with the &quot;select&quot; attribute), one can think of the &lt;xm:Include/&gt; element as a function call that causes the whole file (specified in the &quot;file&quot; attribute) to get preprocessed in the same manner as the document containing the &lt;xm:Include/&gt; element.  From the resulting document, elements selected by the &quot;select&quot; attribute will then get included to replace the &lt;xm:Include/&gt; element.</p>
+
+<p>In the second form (with the &quot;import&quot; attribute), &lt;xm:Include/&gt; can also be used to &quot;import&quot; variables defined in the included file. This can be used, for example, for defining common Python functions and classes in a separate XML fragment file:</p>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;xm:Include
+    file=&quot;<i>../path/to/functions.xml</i>&quot;
+    import=&quot;*&quot;/&gt;
+
+&lt;xm:Text&gt;
+  { imported_function(1, 2, 3) }
+&lt;/xm:Text&gt;</td>
+
+<td><i>[ Result of 'imported_function(1, 2, 3)' ]</i></td>
+
+</tr>
+</table>
+
+<p>The &quot;import&quot; attribute works like the last part of the Python statement &quot;from xyz import &lt;names_or_star&gt;&quot;. It is a comma-separated list of names to import in the current Python namespace, or just '*' to import all names.</p>
+
+<p>Variables can be set for the initial namespace of the included file by supplying them as additional attributes (neither called 'file', 'import', nor 'select'). The values of those attributes will be evaluated as Python expressions. In addition to those, the content of the current namespace will be available as well.</p>
+
+<h3>&lt;xm:Loop/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;xm:Loop i=&quot;range(1, 4)&quot;&gt;
+    &lt;value label=&quot;{i} squared&quot;&gt;
+        &lt;xm:Text&gt;{i ** 2}&lt;/xm:Text&gt;
+    &lt;/value&gt;
+&lt;/xm:Loop&gt;</td>
+
+<td>&lt;value label=&quot;1 squared&quot;&gt; 1 &lt;/value&gt;
+&lt;value label=&quot;2 squared&quot;&gt; 4 &lt;/value&gt;
+&lt;value label=&quot;3 squared&quot;&gt; 9 &lt;/value&gt;</td>
+
+</tr>
+</table>
+
+<p>Loop over the body of &lt;xm:Loop/&gt; with the values i=1, i=2, i=3. The first attribute value of &lt;xm:Loop/&gt; is evaluated as a Python expression and assigned to the variable &quot;i&quot; (or whatever the name of the first attribute happens to be). Refer to the Python Library Reference, section &quot;built-in functions&quot;, for more information on the range() function.</p>
+
+<h3>&lt;xm:PythonCode/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;xm:PythonCode&gt;&lt;![CDATA[
+    f = file(&quot;binary_data.dat&quot;, &quot;rb&quot;)
+    bin_data = f.read()
+]]&gt;&lt;/xm:PythonCode&gt;
+
+&lt;binary-data&gt;&lt;xm:Text&gt;
+  { bin_data }
+&lt;/xm:Text&gt;&lt;/binary-data&gt;</td>
+
+<td>&lt;binary-data&gt;
+  [ XML-escaped binary data ]
+&lt;/binary-data&gt;</td>
+
+</tr>
+</table>
+
+<p>The example reads binary data from a file and includes it as-is into the XML document.</p>
+
+<h3>&lt;xm:RemoveAttributes/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;X first=&quot;1&quot; second=&quot;2&quot;/&gt;
+&lt;X first=&quot;3&quot;/&gt;
+&lt;X second=&quot;4&quot;/&gt;
+
+&lt;xm:RemoveAttributes
+    from=&quot;<i>XPath/to/X[@first]</i>&quot;
+    name=&quot;second&quot;/&gt;</td>
+
+<td>&lt;X first=&quot;1&quot;/&gt;
+&lt;X first=&quot;3&quot;/&gt;
+&lt;X second=&quot;4&quot;/&gt;</td>
+
+</tr>
+</table>
+
+<p>Remove every attribute called 'second' from all elements 'X' that have an attribute called 'first'.</p>
+
+<h3>&lt;xm:RemoveElements/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;A&gt;
+    &lt;B/&gt;
+    &lt;C&gt;
+        &lt;D/&gt;
+    &lt;/C&gt;
+&lt;/A&gt;
+
+&lt;xm:RemoveElements
+    select=&quot;<i>XPath/to/C</i>&quot;/&gt;</td>
+
+<td>&lt;A&gt;
+    &lt;B/&gt;
+&lt;/A&gt;</td>
+
+</tr>
+</table>
+
+<p>Remove all elements 'C'.</p>
+
+<h3>&lt;xm:SetAttribute/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;element dst=&quot;12&quot; other=&quot;14&quot;/&gt;
+&lt;element/&gt;
+
+&lt;xm:SetAttribute
+    of=&quot;<i>XPath/to/element</i>&quot;
+    name=&quot;dst&quot; value=&quot;23&quot;/&gt;</td>
+
+<td>&lt;element dst=&quot;23&quot; other=&quot;14&quot;/&gt;
+&lt;element dst=&quot;23&quot;/&gt;</td>
+
+</tr>
+</table>
+
+<p>Set the attribute of &quot;element&quot;. The name of the attribute to be set is specified in the &quot;name&quot; attribute, the value of the attribute to be set is specified in the &quot;value&quot; attribute of &lt;xm:SetAttribute/&gt;. In this example, set dst=&quot;23&quot; on all &quot;element&quot; elements.</p>
+
+<h3>&lt;xm:Text/&gt;</h3>
+
+<p>See &lt;xm:Loop/&gt; example. An &lt;xm:Text/&gt; provides the same Python expression substitution capability using &quot;{...}&quot; for XML text that is available for XML attributes.</p>
+
+<h3>&lt;xm:Var/&gt;</h3>
+
+<table class="example">
+<tr class="header">
+<td><b>Input</b></td><td><b>Output</b></td>
+</tr>
+<tr>
+
+<td>&lt;xm:Var
+    a_number=&quot;55.2&quot;
+    a_string=&quot; 'my name is Pascal' &quot;/&gt;
+
+&lt;element
+    x=&quot;{int(a_number)}&quot;
+    y=&quot;{a_string.upper()}&quot;/&gt;</td>
+
+<td>&lt;element
+    x=&quot;55&quot;
+    y=&quot;MY NAME IS PASCAL&quot;/&gt;</td>
+
+</tr>
+</table>
+
+<p>Define the Python variables &quot;a_number&quot; and &quot;a_string&quot;. The values of the attributes to &lt;xm:Var/&gt; are all evaluated as Python expressions and assigned to the variables.</p>
+
+<p>&lt;xm:DefaultVar/&gt; is a variant of &lt;xm:Var/&gt; that can be used to define default values for variables that have not been set already.</p>
+
+
+<h2>Using XML Merge from the Command Line</h2>
+
+<h3>Quickstart</h3>
+
+<p>This is the shortest possible invocation of XML Merge from the command line:</p>
+
+<pre style="font-size: 1.5em;">xmlmerge.py -i somefile.xml</pre>
+
+<p>It may be necessary to run xmlmerge.py using its full path, and/or specifying the full path to the Python interpreter, as in this example (Windows):</p>
+
+<pre>C:\Python26\python.exe &quot;C:\Tools\XML Merge\xmlmerge.py&quot; -i somefile.xml</pre>
+
+<p>It is strongly recommended though to install Python in a way that (on Windows systems) associates Python script filename extensions with the Python interpreter, which should be done by default during installation.</p>
+
+<h3>Usage Summary</h3>
+
+<p>This is what you get from a command line invocation of xmlmerge.py with the option &quot;--help&quot; or with erroneous arguments:</p>
+
+<pre>Usage: xmlmerge.py [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -i INPUT, --input=INPUT
+                        (REQUIRED) input XML file
+  -o OUTPUT, --output=OUTPUT
+                        output XML file (.out.xml if not given)
+  -s XML_SCHEMA, --xml-schema=XML_SCHEMA
+                        XML Schema (.xsd) to validate output against
+  -r REFERENCE, --reference=REFERENCE
+                        reference XML file to compare output against
+  -d, --html-diff       only with -r; if output and reference differ, produce
+                        a HTML file showing the differences
+  -t, --trace-includes  add tracing information to included XML fragments
+  -v, --verbose         show debugging messages
+  -q, --quiet           only show error messages</pre>
+
+<h3>Input (-i), Output (-o), XML Schema (-s), and Reference (-r): Filename Arguments</h3>
+
+<p>The arguments given to the options --input, --output, --xml-schema, and --reference can be any XML file.  It can optionally be specified with a relative or absolute pathname.  If relative, the pathname is relative to the current working directory as determined by the operating system (i.e. not relative to xmlmerge.py itself).  The filenames can have any extension, it does not have to be &quot;.xml&quot; (or &quot;.xsd&quot; for the schema), but the extension (if used) has to be provided (i.e. not just &quot;schemafile&quot;, but  &quot;schemafile.xsd&quot; for a file actually called &quot;schemafile.xsd&quot;).</p>
+
+<p>If no <b>output filename</b> is specified using the --output option, then it is constructed from the input filename by removing the filename extension of &quot;.xml&quot; (case-insensitive), and appending &quot;.out.xml&quot;.  If this is not desired, specify the --output option explicitly.  Examples (if no output is specified):</p>
+
+<table class="example nowidth">
+<tr>
+<td>DEVICE.XML</td><td>==&gt;</td><td>DEVICE.out.xml</td>
+</tr>
+<tr>
+<td>protocol.xhtml</td><td>==&gt;</td><td>protocol.xhtml.out.xml</td>
+</tr>
+</table>
+
+<h3>How to use an XML Schema File (-s)</h3>
+
+<p>If an XML Schema file is specified using the --xml-schema option, the created output file is matched against that schema.  The result of the match is reported by xmlmerge.py on its standard output (the terminal screen) and in its return value (also called error code on Windows).</p>
+
+<h3>How to use a Reference XML File (-r and -d)</h3>
+
+<p>If a reference XML file is specified using the --reference option, the created output file is compared to it bitwise.  (I.e. watch out for differing line endings, they might create a confusing and otherwise empty diff.  xmlmerge.py always produces Unix line endings, '\n', on all platforms.)  The result of the comparison is reported by xmlmerge.py on its standard output and in its return value.</p>
+
+<p>If the --html-diff option is given, a file &quot;&lt;output-filename&gt;.diff.html&quot; is produced, showing the differences between the user-provided reference file and the xmlmerge.py-produced output file.</p>
+
+<p>Reference files are particularly useful (and meant to be used) in two occasions:</p>
+
+<ul>
+
+<li><p>For regression testing and debugging xmlmerge.py itself.  The complete source code package of XML Merge includes a number of tests, utilizing the -r and -d options, to catch regressions.</p></li>
+
+<li><p>For testing and debugging changes to XML input files.</p></li>
+
+</ul>
+
+<h3>Tracing Inclusions (-t)</h3>
+
+<p><i>(This feature has not yet been implemented in the current version of XML Merge.)</i></p>
+
+<p>If the --trace-includes option is given, each result of an &lt;xm:Include/&gt; operation will be surrounded by &lt;xmt:Start/&gt; and &lt;xmt:End/&gt; elements.  The XML namespace used for these elements is xmlns:xmt=&quot;urn:felixrabe:xmlns:xmlmerge:inctrace&quot;.</p>
+
+</body>
+</html>
+
+
